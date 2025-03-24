@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.15)  21 MAR 2025 23:53
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.15)  24 MAR 2025 09:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -533,8 +533,8 @@ Package hyperref Info: Link coloring ON on input line 65.
  (./sections/ex01.tex [1{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/upd
 map/pdftex.map}
 
-] [2]) (./sections/ex02.tex)
-(./sections/ex03.tex) [3] (out/main.aux)
+] [2]) (./sections/ex02.tex
+[3]) (./sections/ex03.tex) [4] (out/main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -543,11 +543,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 91744DD0A5689B0231D91FDF7E5849C1;96.
  ) 
 Here is how much of TeX's memory you used:
- 13114 strings out of 474116
- 209334 string characters out of 5743682
- 1954187 words of memory out of 5000000
- 35287 multiletter control sequences out of 15000+600000
- 560071 words of font info for 43 fonts, out of 8000000 for 9000
+ 13139 strings out of 474116
+ 209661 string characters out of 5743682
+ 1955187 words of memory out of 5000000
+ 35297 multiletter control sequences out of 15000+600000
+ 560378 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,16n,79p,400b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
@@ -561,12 +561,13 @@ al/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local
 /texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/te
 xlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texli
 ve/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
-e/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/
-2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on out/main.pdf (3 pages, 147299 bytes).
+e/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/
+2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/20
+24/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on out/main.pdf (4 pages, 168764 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 87 compressed objects within 1 object stream
- 24 named destinations out of 1000 (max. 500000)
+ 152 PDF objects out of 1000 (max. 8388607)
+ 116 compressed objects within 2 object streams
+ 39 named destinations out of 1000 (max. 500000)
  9 words of extra memory for PDF output out of 10000 (max. 10000000)
 

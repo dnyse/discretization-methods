@@ -1,0 +1,69 @@
+\section*{Exercise 2}
+\subsection*{Wave Speed}
+We assume that the solution to the finite difference scheme is rightward traveling wave
+\begin{equation}
+	v(x,t) = e^{ik(x-c_6t)}
+	\label{eq:wave_sol}
+\end{equation}
+We plug \eqref{eq:wave_sol} into our finite difference scheme \eqref{eq:final}
+\begin{equation}
+	\begin{aligned}
+		-ikc_6 e^{ik(x_j-c_6t)} & = -\frac{c}{60 \Delta x} [-e^{ik(x_{j-3}-c_6t)} + 9e^{ik(x_{j-2}-c_6t)} -45 e^{ik(x_{j-1}-c_6t)} \\
+		                        & + 45e^{ik(x_{j+1}-c_6t)}-9e^{ik(x_{j+2}-c_6t)} + e^{ik(x_{j+3}-c_6t)} ]
+	\end{aligned}
+	\label{eq:wave_scheme}
+\end{equation}
+Now divided both side by $ e^{ik(x_j-c_6t)}$
+\begin{equation}
+	\begin{aligned}
+		-ikc_6 & = -\frac{c}{60 \Delta x} [-e^{ik(x_{j-3}-x_j)} + 9e^{ik(x_{j-2}-x_j)} -45 e^{ik(x_{j-1}-x_j)}                                                                \\
+		       & \quad + 45e^{ik(x_{j+1}-x_j)}-9e^{ik(x_{j+2}-x_j)} + e^{ik(x_{j+3}-x_j)} ]                                                                                   \\
+		       & = -\frac{c}{60 \Delta x} \left [-e^{-3ik \Delta x} + 9e^{-2ik\Delta x} -45 e^{-ik \Delta x} + 45e^{ik\Delta x} -9e^{2ik \Delta x} + e^{3ik\Delta x} \right ]
+	\end{aligned}
+\end{equation}
+We can now use the following formula $e^{ik \phi} - e^{-ik \phi} = 2i \sin (k \phi)$ to simplify the equation even further
+\begin{equation}
+	\begin{aligned}
+		-ikc_6 & =  -\frac{c}{60 \Delta x} \left [ 2i \sin (3k \Delta x ) - 18i \sin (2k \Delta x) + 90i \sin (k \Delta x) \right] \\
+		       & = -\frac{c}{30 \Delta x}i  \left [ \sin (3k \Delta x) - 9 \sin (2k \Delta x) + 45 \sin (k \Delta x) \right]       \\
+	\end{aligned}
+	\label{eq:pairs}
+\end{equation}
+Dividing by $-ik$ we end up with the wave speed for the 6th order approximation
+\begin{equation}
+	c_6(k) = c\frac{45 \sin (k \Delta x) - 9 \sin (2k \Delta x) + \sin (3k \Delta x) }{30 k\Delta x}
+	\label{eq:wave_speed}
+\end{equation}
+\subsection*{Phase Error}
+For the $2m$-order scheme we can define the phase error as
+\begin{equation}
+	e_m(k)=\left|\frac{u(x, t)-v(x, t)}{u(x, t)}\right|=\left|1-e^{i k\left(c-c_m\right) t}\right| \approx k t\left|c-c_m(k)\right|
+	\label{eq:phase_error}
+\end{equation}
+Now using our result in \eqref{eq:wave_speed} we can define the phase error for a 6th order scheme as follows
+\begin{equation}
+	e_6(k, t)=kct\left|1- \frac{45 \sin (k \Delta x) - 9 \sin (2k \Delta x) + \sin (3k \Delta x) }{30 k\Delta x}\right|
+	\label{eq:6phase_error}
+\end{equation}
+To measure the accuracy of the 6th scheme, let's introduce the number of grid points per waive length
+\begin{equation}
+	p = \frac{\lambda}{\Delta x}= \frac{2 \pi}{k \Delta x}
+	\label{eq:n_gp}
+\end{equation}
+and the number of time the solution returns to itself, due to the periodicity
+\begin{equation}
+	\nu = \frac{ct}{\lambda}
+	\label{eq:periodicity}
+\end{equation}
+Rewriting the phase error \eqref{eq:6phase_error} in terms of $p$ for $k$ and $\nu$ for $t$ results in
+\begin{equation}
+	\begin{aligned}
+		e_6(p, \nu) & = \frac{2 \pi}{(\lambda/ \Delta x) \Delta x} c \frac{\nu \lambda}{c} \left|1- \frac{45 \sin (2 \pi p^{-1}) - 9 \sin (2 \cdot 2 \pi p^{-1}) + \sin (3 \cdot 2 \pi p^{-1}) }{(30 \cdot 2 \pi p^{-1})}\right| \\
+		            & = 2 \pi \nu \left|1- \frac{45 \sin (2 \pi p^{-1}) - 9 \sin (4 \pi p^{-1}) + \sin (6 \pi p^{-1})}{(60 \pi p^{-1})}\right|                                                                                   \\
+	\end{aligned}
+	\label{eq:6phase_error_pnu}
+\end{equation}
+If we now perform a leading-order approximation ($p \rightarrow \infty$) this means the terms including $p^{-1}$ become small we can use the Taylor series expansion for $\sin$, which is given by the following formula
+\begin{equation}
+	\sin (x)=\sum_{n=0}^{\infty} \frac{(-1)^n}{(2 n+1)!} x^{2 n+1}
+\end{equation}
