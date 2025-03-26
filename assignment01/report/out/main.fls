@@ -159,10 +159,10 @@ INPUT out/main.out
 INPUT out/main.out
 INPUT out/main.out
 INPUT out/main.out
-OUTPUT out/main.pdf
 INPUT out/main.out
 INPUT out/main.out
 OUTPUT out/main.out
+OUTPUT out/main.pdf
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm

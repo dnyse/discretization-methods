@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.15)  24 MAR 2025 09:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.15)  26 MAR 2025 18:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -534,17 +534,23 @@ Package hyperref Info: Link coloring ON on input line 65.
 map/pdftex.map}
 
 ] [2]) (./sections/ex02.tex
-[3]) (./sections/ex03.tex) [4] (out/main.aux)
+[3] [4] [5
+pdfTeX warning (ext4): destination with the same identifier (name{equation.0.30
+}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.133 \end{equation}
+                    ]) (./sections/ex03.tex) [6] (out/main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 91744DD0A5689B0231D91FDF7E5849C1;96.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 13139 strings out of 474116
- 209661 string characters out of 5743682
+ 13152 strings out of 474116
+ 209822 string characters out of 5743682
  1955187 words of memory out of 5000000
  35297 multiletter control sequences out of 15000+600000
  560378 words of font info for 44 fonts, out of 8000000 for 9000
@@ -564,10 +570,10 @@ ve/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
 e/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/
 2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/20
 24/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on out/main.pdf (4 pages, 168764 bytes).
+Output written on out/main.pdf (6 pages, 175288 bytes).
 PDF statistics:
- 152 PDF objects out of 1000 (max. 8388607)
- 116 compressed objects within 2 object streams
- 39 named destinations out of 1000 (max. 500000)
- 9 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 169 PDF objects out of 1000 (max. 8388607)
+ 131 compressed objects within 2 object streams
+ 52 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
