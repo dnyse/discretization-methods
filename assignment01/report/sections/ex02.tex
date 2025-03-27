@@ -137,5 +137,18 @@ Hence the bound is given as
 	\label{eq:bound_final}
 \end{equation}
 
-
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        $\epsilon_p$ & 2nd Order Scheme ($p_1$) & 4th Order Scheme ($p_2$) & 6th Order Scheme ($p_3$) \\
+        \hline
+        0.1 & $p_1 \geq 20\sqrt[2]{\nu}$ & $p_2 \geq 7\sqrt[4]{\nu}$ & $p_3 \geq 5.5\sqrt[6]{\nu}$ \\
+		\hline
+        0.01 & $p_1 \geq 64\sqrt[2]{\nu}$ & $p_2 \geq 13\sqrt[4]{\nu}$ & $p_3 \geq 8\sqrt[6]{\nu}$ \\
+        \hline
+    \end{tabular}
+    \caption{Comparison of numerical scheme requirements for different error tolerances ($\epsilon_p$)}
+    \label{tab:scheme_comparison}
+\end{table}
 

@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1743009301.57132 "main.tex" "out/main.pdf" "main" 1743009302.07144 0
+["pdflatex"] 1743110990.49136 "main.tex" "out/main.pdf" "main" 1743110990.96091 0
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -79,6 +79,7 @@
   "/usr/local/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty" 1665067230 13815 760b0c02f691ea230f5359c4e1de23a7 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1708463273 30006 3d512c0edd558928ddea1690180ef77e ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg" 1279039959 678 4792914a8f45be57bb98413425e4c7af ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/multirow/multirow.sty" 1615845910 6149 2398eec4faa1ee24ff761581e580ecf1 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty" 1667072951 6572 ea530fbbe537629fd97736d33babc07d ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/pdflscape/pdflscape.sty" 1667072951 2224 1230ab76aa62221ccbd90bca8c8c015e ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/pdfpages/pdfpages.sty" 1705871773 54914 ea9713532d0d0ae802ca2446650f9ded ""
@@ -93,12 +94,12 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1726352587.27224 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1726352554 8221414 64be8166ea5cbefd70982b4fb3cf0bca ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "main.tex" 1742562133.03048 1381 ff7d9081860d299af27ce5339eb4b947 ""
-  "out/main.aux" 1743009302.02172 1443 37e92d8fa65f2558d24d30fa1178288b "pdflatex"
-  "out/main.out" 1743009301.8865 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "sections/ex01.tex" 1742983983.77671 11144 9c2036291a3c5a5f99f6170eb9af56c5 ""
-  "sections/ex02.tex" 1743009299.93214 8067 f6cc479b8831b9819e8534616cc3a84f ""
-  "sections/ex03.tex" 1742560074.02065 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "main.tex" 1743110161.78804 1403 6456e803de215b3fb0359e0651d89e62 ""
+  "out/main.aux" 1743110990.91104 2217 b873a2b15df3524f9fd8ac2cb3562efe "pdflatex"
+  "out/main.out" 1743110990.78461 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "sections/ex01.tex" 1743110221.54713 11199 029c861a17812662d3cb9ce8717aaef4 ""
+  "sections/ex02.tex" 1743110845.07094 8660 f94635d8e2e56271b3ad11b313d4f93c ""
+  "sections/ex03.tex" 1743110989.6312 666 04806e8d542deef42f2ba2a20148732e ""
   (generated)
   "out/main.aux"
   "out/main.log"

@@ -73,21 +73,21 @@ Therefore we compute the limit:
 the second term goes to zero due to $L_{j+k}(x_j) = 0$, but for the first term we can write out the langrange polynomial and take out the term for $l=0$ in the product resulting in
 \begin{equation}
 	\begin{aligned}
-		\lim_{x \rightarrow x_j} c_k & =  \lim_{x \rightarrow x_j} \frac{1}{x - x_j} \frac{x - x_j}{x_{j+k} - x_j} \prod_{l=-3, l \neq k, l \neq 0} \frac{x - x_{j+l}}{x_{j+k} - x_{j+l}} \\
-		                             & =  \lim_{x \rightarrow x_j} \frac{1}{x_{j+k} - x_j} \cdot \prod_{l=-3, l \neq k, l \neq 0} \frac{x - x_{j+l}}{x_{j+k} - x_{j+l}}                   \\
+		\lim_{x \rightarrow x_j} c_k & =  \lim_{x \rightarrow x_j} \frac{1}{x - x_j} \frac{x - x_j}{x_{j+k} - x_j} \prod_{l=-3, l \neq k, l \neq 0}^3 \frac{x - x_{j+l}}{x_{j+k} - x_{j+l}} \\
+		                             & =  \lim_{x \rightarrow x_j} \frac{1}{x_{j+k} - x_j} \cdot \prod_{l=-3, l \neq k, l \neq 0}^3 \frac{x - x_{j+l}}{x_{j+k} - x_{j+l}}                   \\
 		\label{eq:yep}
 	\end{aligned}
 \end{equation}
 Evaluating this at $x = x_j$ leads to a non zero term for $k \neq 0$.
 \begin{equation}
-	c_k = \frac{1}{x_{j+k} - x_j} \prod_{l=-3, l \neq k, l \neq 0} \frac{x_j - x_{j+l}}{x_{j+k} - x_{j+l}}
+	c_k = \frac{1}{x_{j+k} - x_j} \prod_{l=-3, l \neq k, l \neq 0}^3 \frac{x_j - x_{j+l}}{x_{j+k} - x_{j+l}}
 	\label{eq:non_zero}
 \end{equation}
 Using the result from \eqref{eq:c_0} and \eqref{eq:non_zero} leads to the following coefficients:\newline
 For $k=-3$:
 \begin{equation}
 	\begin{aligned}
-		c_{-3} & = \frac{1}{x_{j-3} - x_j} \prod_{l \neq 0, l \neq -3} \frac{x_j - x_{j+l}}{x_{j-3} - x_{j+l}}                                                                                                                    \\
+		c_{-3} & = \frac{1}{x_{j-3} - x_j} \prod_{l=-3, l \neq 0, l \neq -3}^3 \frac{x_j - x_{j+l}}{x_{j-3} - x_{j+l}}                                                                                                                    \\
 		       & = \frac{1}{-3\Delta x} \cdot \frac{(x_j - x_{j-2})(x_j - x_{j-1})(x_j - x_{j+1})(x_j - x_{j+2})(x_j - x_{j+3})}{(x_{j-3} - x_{j-2})(x_{j-3} - x_{j-1})(x_{j-3} - x_{j+1})(x_{j-3} - x_{j+2})(x_{j-3} - x_{j+3})} \\
 		       & = \frac{1}{-3\Delta x} \cdot \frac{(2\Delta x)(\Delta x)(-\Delta x)(-2\Delta x)(-3\Delta x)}{(-\Delta x)(-2\Delta x)(-4\Delta x)(-5\Delta x)(-6\Delta x)}                                                         \\
 		       & = \frac{1}{-3\Delta x} \cdot \frac{-12 \Delta x^5}{-240 \Delta x^5} = \frac{-1}{60\Delta x}                                                                                                                        \\
@@ -96,7 +96,7 @@ For $k=-3$:
 For $k=-2$:
 \begin{equation}
 	\begin{aligned}
-		c_{-2} & = \frac{1}{x_{j-2} - x_j} \prod_{l \neq 0, l \neq -2} \frac{x_j - x_{j+l}}{x_{j-2} - x_{j+l}}                                                                                                                    \\
+		c_{-2} & = \frac{1}{x_{j-2} - x_j} \prod_{l = -3 l \neq 0, l \neq -2}^3 \frac{x_j - x_{j+l}}{x_{j-2} - x_{j+l}}                                                                                                                    \\
 		       & = \frac{1}{-2\Delta x} \cdot \frac{(x_j - x_{j-3})(x_j - x_{j-1})(x_j - x_{j+1})(x_j - x_{j+2})(x_j - x_{j+3})}{(x_{j-2} - x_{j-3})(x_{j-2} - x_{j-1})(x_{j-2} - x_{j+1})(x_{j-2} - x_{j+2})(x_{j-2} - x_{j+3})} \\
 		       & =  \frac{1}{-2\Delta x} \cdot \frac{(3\Delta x)(\Delta x)(-\Delta x)(-2\Delta x)(-3\Delta x)}{(\Delta x)(-\Delta x)(-3\Delta x)(-4\Delta x)(-5\Delta x)}                                                           \\
 		       & = \frac{1}{-2\Delta x} \cdot \frac{-18\Delta x^5}{60 \Delta x^5} = \frac{3}{20\Delta x}
@@ -105,7 +105,7 @@ For $k=-2$:
 For $k=-1$:
 \begin{equation}
 	\begin{aligned}
-		c_{-1} & = \frac{1}{x_{j-1} - x_j} \prod_{l \neq 0, l \neq -1} \frac{x_j - x_{j+l}}{x_{j-1} - x_{j+l}}                                                                                                                   \\
+		c_{-1} & = \frac{1}{x_{j-1} - x_j} \prod_{l=-3, l \neq 0, l \neq -1}^3 \frac{x_j - x_{j+l}}{x_{j-1} - x_{j+l}}                                                                                                                   \\
 		       & = \frac{1}{-\Delta x} \cdot \frac{(x_j - x_{j-3})(x_j - x_{j-2})(x_j - x_{j+1})(x_j - x_{j+2})(x_j - x_{j+3})}{(x_{j-1} - x_{j-3})(x_{j-1} - x_{j-2})(x_{j-1} - x_{j+1})(x_{j-1} - x_{j+2})(x_{j-1} - x_{j+3})} \\
 		       & = \frac{1}{-\Delta x} \cdot \frac{(3\Delta x)(2\Delta x)(-\Delta x)(-2\Delta x)(-3\Delta x)}{(2\Delta x)(\Delta x)(-2\Delta x)(-3\Delta x)(-4\Delta x)}                                                            \\
 		       & = \frac{1}{-\Delta x} \cdot \frac{-36 \Delta x^5}{-48 \Delta x^5} = \frac{-3}{4\Delta x}
@@ -115,7 +115,7 @@ For $k = 0 $ the coefficient was computed in \eqref{eq:c_0} and is $c_0 = 0$\new
 For $k = 1$:
 \begin{equation}
 	\begin{aligned}
-		c_{1} & = \frac{1}{x_{j+1} - x_j} \prod_{l \neq 0, l \neq 1} \frac{x_j - x_{j+l}}{x_{j+1} - x_{j+l}}                                                                                                                   \\
+		c_{1} & = \frac{1}{x_{j+1} - x_j} \prod_{l=-3, l \neq 0, l \neq 1}^3 \frac{x_j - x_{j+l}}{x_{j+1} - x_{j+l}}                                                                                                                   \\
 		      & = \frac{1}{\Delta x} \cdot \frac{(x_j - x_{j-3})(x_j - x_{j-2})(x_j - x_{j-1})(x_j - x_{j+2})(x_j - x_{j+3})}{(x_{j+1} - x_{j-3})(x_{j+1} - x_{j-2})(x_{j+1} - x_{j-1})(x_{j+1} - x_{j+2})(x_{j+1} - x_{j+3})} \\
 		      & = \frac{1}{\Delta x} \cdot \frac{(3\Delta x)(2\Delta x)(\Delta x)(-2\Delta x)(-3\Delta x)}{(4\Delta x)(3\Delta x)(2\Delta x)(-\Delta x)(-2\Delta x)}                                                               \\
 		      & =  \frac{1}{\Delta x} \cdot \frac{36 \Delta x^5}{48 \Delta x^5} = \frac{3}{4\Delta x}
@@ -124,7 +124,7 @@ For $k = 1$:
 For $k = 2$:
 \begin{equation}
 	\begin{aligned}
-		c_{2} & = \frac{1}{x_{j+2} - x_j} \prod_{l \neq 0, l \neq 2} \frac{x_j - x_{j+l}}{x_{j+2} - x_{j+l}}                                                                                                                    \\
+		c_{2} & = \frac{1}{x_{j+2} - x_j} \prod_{l=-3, l \neq 0, l \neq 2}^3 \frac{x_j - x_{j+l}}{x_{j+2} - x_{j+l}}                                                                                                                    \\
 		      & = \frac{1}{2\Delta x} \cdot \frac{(x_j - x_{j-3})(x_j - x_{j-2})(x_j - x_{j-1})(x_j - x_{j+1})(x_j - x_{j+3})}{(x_{j+2} - x_{j-3})(x_{j+2} - x_{j-2})(x_{j+2} - x_{j-1})(x_{j+2} - x_{j+1})(x_{j+2} - x_{j+3})} \\
 		      & = \frac{1}{2\Delta x} \cdot \frac{(3\Delta x)(2\Delta x)(\Delta x)(-\Delta x)(-3\Delta x)}{(5\Delta x)(4\Delta x)(3\Delta x)(\Delta x)(-\Delta x)}                                                                 \\
 		      & = \frac{1}{2\Delta x} \cdot \frac{18 \Delta x^5}{-60 \Delta x^5} = \frac{-3}{20\Delta x}
@@ -133,7 +133,7 @@ For $k = 2$:
 For $k = 3$:
 \begin{equation}
 	\begin{aligned}
-		c_{3} & = \frac{1}{x_{j+3} - x_j} \prod_{l \neq 0, l \neq 3} \frac{x_j - x_{j+l}}{x_{j+3} - x_{j+l}}                                                                                                                    \\
+		c_{3} & = \frac{1}{x_{j+3} - x_j} \prod_{l=-3, l \neq 0, l \neq 3}^3 \frac{x_j - x_{j+l}}{x_{j+3} - x_{j+l}}                                                                                                                    \\
 		      & = \frac{1}{3\Delta x} \cdot \frac{(x_j - x_{j-3})(x_j - x_{j-2})(x_j - x_{j-1})(x_j - x_{j+1})(x_j - x_{j+2})}{(x_{j+3} - x_{j-3})(x_{j+3} - x_{j-2})(x_{j+3} - x_{j-1})(x_{j+3} - x_{j+1})(x_{j+3} - x_{j+2})} \\
 		      & = \frac{1}{3\Delta x} \cdot \frac{(3\Delta x)(2\Delta x)(\Delta x)(-\Delta x)(-2\Delta x)}{(6\Delta x)(5\Delta x)(4\Delta x)(2\Delta x)(\Delta x)}                                                                \\
 		      & = \frac{1}{3\Delta x} \cdot \frac{12 \Delta x^5}{240 \Delta x^5} = \frac{1}{60\Delta x}
