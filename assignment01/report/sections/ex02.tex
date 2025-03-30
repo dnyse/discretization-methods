@@ -92,7 +92,7 @@ For the third order terms:
 \end{equation}
 For the fifth order terms:
 \begin{equation}
-	45\left( 32 \pi^5 p^{-5}\right) - 9\left(1024 \pi^5 p^{-5}\right) + \left(7776 \pi^5 p^{-5}\right) = (1440 - 9216 + 7776) \pi^5 p^{-5} = 0 \pi^3 p^{-3} = 0
+	45\left( 32 \pi^5 p^{-5}\right) - 9\left(1024 \pi^5 p^{-5}\right) + \left(7776 \pi^5 p^{-5}\right) = (1440 - 9216 + 7776) \pi^5 p^{-5} = 0 \pi^5 p^{-5} = 0
 \end{equation}
 and seventh order terms:
 \begin{equation}
@@ -119,7 +119,8 @@ We can remove the absolute brackets due to p being a large postive number, resul
 		e_3(p, \nu) & = 2\pi\nu \frac{16}{35}\pi^6 p^{-6} = \frac{\pi \nu}{70} \left ( \frac{2\pi}{p}\right)^6 \\
 	\end{aligned}
 \end{equation}
-We can use now the obtained equation to derive the number of points per wavelength required to ensure that the phase error is bounded by $\epsilon_3$.
+Let's assume we can accept an error $\epsilon_p$ after $\nu$ periods of evolution. 
+We can now derive $p_3(\epsilon_p, \nu)$ the number of points per wavelength required to ensure the phase error is bounded by $\epsilon_p$
 \begin{equation}
 	\begin{aligned}
 		e_3(p, \nu)                               & = \frac{\pi \nu}{70} \left ( \frac{2\pi}{p} \right)^6 \\
@@ -136,6 +137,10 @@ Hence the bound is given as
 	p_3(\epsilon_p, \nu) \geq 2 \pi \sqrt[6]{\frac{\pi \nu}{70\epsilon_p} }
 	\label{eq:bound_final}
 \end{equation}
+If we now compare the 2nd, 4th, and 6th order schemes using $\epsilon_p = 0.1$ and $\epsilon_p = 0.01$ in Table~\ref{tab:scheme_comparison}, we can observe that for $\epsilon_p = 0.1$, increasing the order doesn't yield much gain, except when integration times are very long (high values of $\nu$). For $\epsilon_p = 0.01$, we observe that higher order schemes become more beneficial even at lower integration times. 
+Although the difference between the 2nd order and 4th order schemes is more significant at this error level, if we further decrease the error tolerance and hence increase the required accuracy, the 6th order scheme will become even more beneficial. This trend becomes particularly pronounced for very small error tolerances (e.g., $\epsilon_p = 10^{-5}$).
+Our analysis shows that the computational efficiency advantage of higher order schemes increases with stricter accuracy requirements.
+In conclusion, the 6th order scheme is recommended when either higher accuracy is required or when simulating over long periods of time that require capturing many oscillations of the solution.
 
 \begin{table}[H]
     \centering

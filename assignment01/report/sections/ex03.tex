@@ -1,18 +1,40 @@
-\begin{table}[h]
-    \centering
-    \begin{tabular}{|c|c|c|}
-        \hline
-        $k$ & Minimum $N$ & Max Relative Error \\ 
-        \hline
-        2  & 22  & $3.7751 \times 10^{-6}$ \\ 
-        4  & 32  & $5.6209 \times 10^{-6}$ \\ 
-        6  & 42  & $4.1225 \times 10^{-6}$ \\ 
-        8  & 52  & $2.4255 \times 10^{-6}$ \\ 
-        10 & 60  & $7.8919 \times 10^{-6}$ \\ 
-        12 & 70  & $3.8702 \times 10^{-6}$ \\ 
-        \hline
-    \end{tabular}
-    \caption{Minimum $N$ required to achieve a max relative error below a given threshold.}
-    \label{tab:fourier_accuracy}
+\section*{Exercise 3}
+To evaluate the accuracy of spectral methods for differentiation, we tested the Fourier differentiation matrix for odd number of grid points on a function with a known analytical derivative. The Fourier differentiation matrix $\tilde{D}$ is given as:
+\begin{equation}
+	\tilde{D}_{ji} = \begin{cases}
+		\frac{(-1)^{j+i}}{2}\left[\sin\left(\frac{(j-i)\pi}{N+1}\right)\right]^{-1} & \text{if } i \neq j \\
+		0                                                                           & \text{if } i = j
+	\end{cases}
+\end{equation}
+Please note note that this particular matrix is designed for an odd number of grid points. In the course slides, the domain is discretized as $x \in [0, 2\pi]$ with $x_j = \frac{2 \pi j}{N+1} \  \text{ for} j\in[0, \dots, N]$. These $N+1$ equidistant grid points result in a grid with an odd number of points when $N$ is even.\newline
+\newline
+The accuracy of this differentiation matrix was evaluated on the following function:
+\begin{equation}
+	u(x) = \exp(k\sin x)
+\end{equation}
+defined on the interval $x \in [0, 2\pi]$, where $k$ is a parameter that controls the oscillatory behavior of the function. The corresponding derivative is given by
+\begin{equation}
+	u'(x) = k\cos x \cdot \exp(k\sin x)
+\end{equation}
+and used as the analytical version of the function and used to compute the relative error.
+Table~\ref{tab:fourier_accuracy} shows the minimum number of grid points needed to achieve the maximum relative error of $10^{-5}$
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		$k$ & Minimum $N$ & Max Relative Error     \\
+		\hline
+		2   & 22          & $3.7751 \cdot 10^{-6}$ \\
+		4   & 32          & $5.6209 \cdot 10^{-6}$ \\
+		6   & 42          & $4.1225 \cdot 10^{-6}$ \\
+		8   & 52          & $2.4255 \cdot 10^{-6}$ \\
+		10  & 60          & $7.8919 \cdot 10^{-6}$ \\
+		12  & 70          & $3.8702 \cdot 10^{-6}$ \\
+		\hline
+	\end{tabular}
+	\caption{Minimum $N$ required to achieve a maximum relative error below the threshold of $10^{-5}$.}
+	\label{tab:fourier_accuracy}
 \end{table}
-
+The results show that the number of grid points required to achieve the specified accuracy increases approximately linearly with $k$. This can be explained by the fact that larger values of $k$ lead to more oscillatory functions. To accurately capture these higher frequencies, a finer grid resolution is necessary.\newline
+\newline
+I implemented this exercise in C++ (more details can be found in the README.md file). For higher values of kk, computing the relative error reaches the limits of floating-point precision due to the extremely small magnitude of the error. Depending on the machine and operating system, slight variations in results can be expected. To mitigate this issue, I used the Boost library and introduced a specialized double type with 50 bits of precision.

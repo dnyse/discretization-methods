@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1743110990.49136 "main.tex" "out/main.pdf" "main" 1743110990.96091 0
+["pdflatex"] 1743330938.60019 "main.tex" "out/main.pdf" "main" 1743330939.09598 0
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
@@ -95,11 +95,11 @@
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1726352554 8221414 64be8166ea5cbefd70982b4fb3cf0bca ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
   "main.tex" 1743110161.78804 1403 6456e803de215b3fb0359e0651d89e62 ""
-  "out/main.aux" 1743110990.91104 2217 b873a2b15df3524f9fd8ac2cb3562efe "pdflatex"
-  "out/main.out" 1743110990.78461 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "out/main.aux" 1743330939.04465 2223 690d7c76b7ed127b483c5f2d37fc217b "pdflatex"
+  "out/main.out" 1743330938.9053 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   "sections/ex01.tex" 1743110221.54713 11199 029c861a17812662d3cb9ce8717aaef4 ""
-  "sections/ex02.tex" 1743110845.07094 8660 f94635d8e2e56271b3ad11b313d4f93c ""
-  "sections/ex03.tex" 1743110989.6312 666 04806e8d542deef42f2ba2a20148732e ""
+  "sections/ex02.tex" 1743328836.6733 9834 9847ef3102742a206f2b993b469853cf ""
+  "sections/ex03.tex" 1743330936.77265 2847 5b5abde9e772657f9964cd904b954c05 ""
   (generated)
   "out/main.aux"
   "out/main.log"
