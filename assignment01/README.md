@@ -34,7 +34,7 @@ cmake --build build
 Run the executable to calculate the minimum grid size (\( N \)) needed to achieve a relative error of less than \( 10^{-5} \) for different values of \( k \):
 
 ```bash
-./solver
+./build/solver
 ```
 
 The program will output:
@@ -48,12 +48,14 @@ The program will output:
 The program uses spectral differentiation with Fourier differentiation matrices to approximate derivatives of the function:
 
 \[
-u(x) = \exp(k \sin x)\]
+u(x) = \exp(k \sin x)
+\]
 
 The analytical derivative is:
 
 \[
-u'(x) = k\cos(x) \exp(k\sin x)\]
+\frac{du(x)}{dx} = k\cos(x) \exp(k\sin x)
+\]
 
 ### Implementation
 
@@ -77,4 +79,3 @@ u'(x) = k\cos(x) \exp(k\sin x)\]
   - Fourier differentiation matrix construction
   - Analytical and numerical derivative calculations
   - Error analysis and grid size optimization
-
