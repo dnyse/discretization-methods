@@ -12,8 +12,10 @@ public:
   virtual void compute_analy_sols(AnalyticalFunction<T> ana_u,
                                   AnalyticalFunction<T> ana_du, int k = 0);
   virtual void create_grid_pts(int N) = 0;
-  virtual T L_inf_error();
-  virtual T L_2_error();
+  virtual T L_inf_error() const;
+  virtual T L_2_error() const;
+  virtual std::vector<T> get_numerical_sol() const;
+  virtual std::vector<T> hyperbolic_F() const;
 
 protected:
   std::vector<T> x_;
@@ -24,7 +26,8 @@ protected:
 
 template <NumericType T>
 void Differentiator<T>::compute_analy_sols(AnalyticalFunction<T> ana_u,
-                                           AnalyticalFunction<T> ana_du, int k) {
+                                           AnalyticalFunction<T> ana_du,
+                                           int k) {
   analytical_u_ = std::vector<T>(x_.size());
   analytical_du_ = std::vector<T>(x_.size());
   for (int i = 0; i < x_.size(); i++) {
@@ -33,7 +36,7 @@ void Differentiator<T>::compute_analy_sols(AnalyticalFunction<T> ana_u,
   }
 }
 
-template <NumericType T> T Differentiator<T>::L_inf_error() {
+template <NumericType T> T Differentiator<T>::L_inf_error() const {
   std::vector<T> abs_diffs(x_.size());
   for (int i = 0; i < x_.size(); i++) {
     abs_diffs[i] = error::absolute_diff(analytical_du_[i], numerical_du_[i]);
@@ -42,7 +45,7 @@ template <NumericType T> T Differentiator<T>::L_inf_error() {
   return L_inf;
 }
 
-template <NumericType T> T Differentiator<T>::L_2_error() {
+template <NumericType T> T Differentiator<T>::L_2_error() const {
   std::vector<T> abs_diffs(x_.size());
   for (int i = 0; i < x_.size(); i++) {
     abs_diffs[i] = error::absolute_diff(analytical_du_[i], numerical_du_[i]);
@@ -53,6 +56,24 @@ template <NumericType T> T Differentiator<T>::L_2_error() {
   }
   L_2 = sqrt(L_2 / x_.size()); // Normalized by number of points
   return L_2;
+}
+
+template <NumericType T>
+std::vector<T> Differentiator<T>::get_numerical_sol() const {
+  return numerical_du_;
+}
+
+template <NumericType T>
+std::vector<T>
+Differentiator<T>::hyperbolic_F() const {
+  compute_num_sol();
+
+  // Multiply by -2π
+  for (auto &val : numerical_du_) {
+    val *= T(-2.0) * MathConstants<T>::PI;
+  }
+
+  return numerical_du_;
 }
 
 #endif // INCLUDE_INCLUDE_DIFF_H_
