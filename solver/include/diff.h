@@ -14,8 +14,9 @@ public:
   virtual void create_grid_pts(int N) = 0;
   virtual T L_inf_error() const;
   virtual T L_2_error() const;
-  virtual std::vector<T> get_numerical_sol() const;
-  virtual std::vector<T> hyperbolic_F() const;
+  virtual std::vector<T> &get_numerical_sol() const;
+  virtual std::vector<T> compute_F(std::vector<T> &u);
+  const std::vector<T> &get_x() const;
 
 protected:
   std::vector<T> x_;
@@ -59,21 +60,28 @@ template <NumericType T> T Differentiator<T>::L_2_error() const {
 }
 
 template <NumericType T>
-std::vector<T> Differentiator<T>::get_numerical_sol() const {
+std::vector<T> &Differentiator<T>::get_numerical_sol() const {
   return numerical_du_;
 }
 
 template <NumericType T>
-std::vector<T>
-Differentiator<T>::hyperbolic_F() const {
+std::vector<T> Differentiator<T>::compute_F(std::vector<T> &u) {
+	this->analytical_u_ = u;
+
   compute_num_sol();
 
+  std::vector F(numerical_du_.size());
   // Multiply by -2π
-  for (auto &val : numerical_du_) {
-    val *= T(-2.0) * MathConstants<T>::PI;
+  for (size_t i = 0; i < numerical_du_.size(); ++i) {
+    F[i] = -T(2) * MathConstants<T>::PI() * numerical_du_[i];
   }
 
-  return numerical_du_;
+  return F;
+}
+
+template <NumericType T>
+const std::vector<T> &Differentiator<T>::get_x() const {
+  return x_;
 }
 
 #endif // INCLUDE_INCLUDE_DIFF_H_
