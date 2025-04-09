@@ -39,12 +39,12 @@ public:
 
     // Set different dt based on the method type
     if (dynamic_cast<SecondOrderFiniteDiff<T> *>(differentiator_.get())) {
-      dt_ = T(0.1) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
     } else if (dynamic_cast<ForthOrderFiniteDiff<T> *>(differentiator_.get())) {
-      dt_ = T(0.05) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
     } else {
       // Fourier method - more restrictive for stability
-      dt_ = T(0.01) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
     }
 
     // Adjust dt to ensure we hit t_final exactly
@@ -66,7 +66,9 @@ public:
     T t = T(0);
     for (int step = 0; step < num_steps_; ++step) {
       // Perform time integration step
-      u_ = integrator_->integrate(u_, dt_, *differentiator_);
+			// std::cout << "Timestep: " << step << std::endl;
+      u_ = integrator_->integrate(
+          u_, dt_, *differentiator_); // This will now use the non-const version
 
       t += dt_;
     }
@@ -248,10 +250,10 @@ template <NumericType T> void convergence_study() {
 template <NumericType T> void long_time_integration() {
   std::vector<T> times = {T(0), T(100), T(200)};
 
-  // Second order with N=200
+  // Second order with N=200 as specified in the exercise
   int N_second = 200;
 
-  // Fourier with N=10
+  // Fourier with N=10 as specified in the exercise
   int N_fourier = 200;
 
   std::cout << "\nPerforming long time integration comparison..." << std::endl;
@@ -268,7 +270,7 @@ template <NumericType T> void long_time_integration() {
 
     // Fourier
     auto fourier = std::make_shared<SpectralFourier<T>>(MethodType::ODD);
-    fourier->build(N_fourier);
+    fourier->build(N_fourier);  // Build with N=10
     HyperbolicSolver<T> solver_fourier(fourier);
     solver_fourier.initialize(N_fourier, t_final);
     solver_fourier.solve();

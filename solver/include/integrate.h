@@ -9,7 +9,7 @@ public:
   virtual ~Integrator() = default;
 
   virtual std::vector<T> integrate(const std::vector<T> &u, T dt,
-                                   const Differentiator<T> &differentiator) = 0;
+                                   Differentiator<T> &differentiator) = 0;  // Changed to non-const reference
 
 protected:
   std::vector<std::vector<T>> history_numerical_u_ = {};
@@ -18,18 +18,18 @@ protected:
 template <NumericType T> class RungeKutta4 : public Integrator<T> {
 public:
   std::vector<T> integrate(const std::vector<T> &u, T dt,
-                           const Differentiator<T> &differentiator) override;
+                           Differentiator<T> &differentiator) override;  // Changed to non-const reference
 };
 
 template <NumericType T>
 std::vector<T>
 RungeKutta4<T>::integrate(const std::vector<T> &u, T dt,
-                          const Differentiator<T> &differentiator) {
+                          Differentiator<T> &differentiator) {  // Changed to non-const reference
   size_t N = u.size() - 1;
   std::vector<T> u1(N + 1), u2(N + 1), u3(N + 1), un_p1(N + 1);
 
   // u1 = u + dt/2 * F(u)
-  std::vector<T> k1 = differentiator.compute_F(u);
+  std::vector<T> k1 = differentiator.compute_F(const_cast<std::vector<T>&>(u));  // Use non-const version
   for (size_t i = 0; i <= N; ++i) {
     u1[i] = u[i] + dt / T(2) * k1[i];
   }
