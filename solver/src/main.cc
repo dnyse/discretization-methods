@@ -70,62 +70,74 @@ void print_summary(std::vector<int> &k_values,
   std::cout << "------------------------------------------------------"
             << std::endl;
 }
-//
-// int main() {
-//   std::vector<int> k_values = {2, 4, 6, 8, 10, 12};
-//   mp_float error_threshold = 1e-5;
-//   int max_N = 100;
-//
-//   std::cout << "ODD Fourier differentiation matrix accuracy for u(x) = "
-//                "exp(k*sin(x))\n";
-//   std::cout << "Error threshold: " << error_threshold << std::endl << std::endl;
-//   SpectralFourier<mp_float> solver_odd(MethodType::ODD);
-//
-//   std::vector<std::pair<int, mp_float>> results = solver_odd.find_min_N(
-//       k_values, TestFunctions::func_ex01_u<mp_float>,
-//       TestFunctions::func_ex01_du<mp_float>, error_threshold, max_N);
-//   print_summary(k_values, results);
-//
-//   std::cout << "EVEN Fourier differentiation matrix accuracy for u(x) = "
-//                "exp(k*sin(x))\n";
-//   std::cout << "Error threshold: " << error_threshold << std::endl << std::endl;
-//
-//   SpectralFourier<mp_float> solver_even(MethodType::EVEN);
-//   results = solver_even.find_min_N(
-//       k_values, TestFunctions::func_ex01_u<mp_float>,
-//       TestFunctions::func_ex01_du<mp_float>, error_threshold, max_N);
-//   print_summary(k_values, results);
-//
-//   std::vector<int> N_values = {8, 16, 32, 64, 128, 256, 512, 1024, 2048};
-//
-//   std::cout << "=================================================" << std::endl;
-//   std::cout << "Convergence Analysis for Fourier Differentiation" << std::endl;
-//   std::cout << "=================================================" << std::endl;
-//   std::cout << "\nMethod: EVEN" << std::endl;
-//
-//   // This behavior is expected for Fourier methods with smooth periodic
-//   // functions.
-//   SpectralFourier<double> solver_even_double(MethodType::EVEN);
-//   analyze_convergence(solver_even_double, N_values,
-//                       TestFunctions::func_ex02_1_u<double>,
-//                       TestFunctions::func_ex02_1_du<double>);
-//   // For cos(x/2) on a [0,2π] domain, the function is not periodic (one full
-//   // period would require [0,4π]), which explains the poor performance.
-//   analyze_convergence(solver_even_double, N_values,
-//                       TestFunctions::func_ex02_2_u<double>,
-//                       TestFunctions::func_ex02_2_du<double>);
-//   // Fourier methods are known to perform poorly for non-periodic functions.
-//   analyze_convergence(solver_even_double, N_values,
-//                       TestFunctions::func_ex02_3_u<double>,
-//                       TestFunctions::func_ex02_3_du<double>);
-//
-//   return 0;
-// }
 
 int main() {
+    // Print header for Exercise 1
+    std::cout << "\n===================================================" << std::endl;
+    std::cout << "EXERCISE 1 - FOURIER DIFFERENTIATION (EVEN vs ODD)" << std::endl;
+    std::cout << "===================================================" << std::endl;
+    
+    std::vector<int> k_values = {2, 4, 6, 8, 10, 12};
+    mp_float error_threshold = 1e-5;
+    int max_N = 100;
+
+    std::cout << "ODD Fourier differentiation matrix accuracy for u(x) = "
+               "exp(k*sin(x))\n";
+    std::cout << "Error threshold: " << error_threshold << std::endl << std::endl;
+    SpectralFourier<mp_float> solver_odd(MethodType::ODD);
+
+    std::vector<std::pair<int, mp_float>> results = solver_odd.find_min_N(
+        k_values, TestFunctions::func_ex01_u<mp_float>,
+        TestFunctions::func_ex01_du<mp_float>, error_threshold, max_N);
+    print_summary(k_values, results);
+
+    std::cout << "\nEVEN Fourier differentiation matrix accuracy for u(x) = "
+               "exp(k*sin(x))\n";
+    std::cout << "Error threshold: " << error_threshold << std::endl << std::endl;
+
+    SpectralFourier<mp_float> solver_even(MethodType::EVEN);
+    results = solver_even.find_min_N(
+        k_values, TestFunctions::func_ex01_u<mp_float>,
+        TestFunctions::func_ex01_du<mp_float>, error_threshold, max_N);
+    print_summary(k_values, results);
+    
+    // Print header for Exercise 2
+    std::cout << "\n===================================================" << std::endl;
+    std::cout << "EXERCISE 2 - FOURIER DIFFERENTIATION CONVERGENCE" << std::endl;
+    std::cout << "===================================================" << std::endl;
+
+    std::vector<int> N_values = {8, 16, 32, 64, 128, 256, 512, 1024, 2048};
+
+    std::cout << "Convergence Analysis for Fourier Differentiation" << std::endl;
+    std::cout << "Method: EVEN" << std::endl;
+
+    // This behavior is expected for Fourier methods with smooth periodic functions.
+    std::cout << "\nFunction: cos(10x)" << std::endl;
+    SpectralFourier<double> solver_even_double(MethodType::EVEN);
+    analyze_convergence(solver_even_double, N_values,
+                      TestFunctions::func_ex02_1_u<double>,
+                      TestFunctions::func_ex02_1_du<double>);
+                      
+    // For cos(x/2) on a [0,2π] domain, the function is not periodic (one full
+    // period would require [0,4π]), which explains the poor performance.
+    std::cout << "\nFunction: cos(x/2)" << std::endl;
+    analyze_convergence(solver_even_double, N_values,
+                      TestFunctions::func_ex02_2_u<double>,
+                      TestFunctions::func_ex02_2_du<double>);
+                      
+    // Fourier methods are known to perform poorly for non-periodic functions.
+    std::cout << "\nFunction: x" << std::endl;
+    analyze_convergence(solver_even_double, N_values,
+                      TestFunctions::func_ex02_3_u<double>,
+                      TestFunctions::func_ex02_3_du<double>);
+
+    // Print header for Exercise 3
+    std::cout << "\n===================================================" << std::endl;
+    std::cout << "EXERCISE 3 - SCALAR HYPERBOLIC PROBLEM" << std::endl;
+    std::cout << "===================================================" << std::endl;
+    
     // Part (a): Convergence study
-    std::cout << "EXERCISE 3 - SCALAR HYPERBOLIC PROBLEM\n" << std::endl;
-    std::cout << "Part (a): Convergence Study\n" << std::endl;
+    std::cout << "\nPart (a): Convergence Study\n" << std::endl;
     convergence_study<double>();
     
     // Part (b): Long time integration comparison

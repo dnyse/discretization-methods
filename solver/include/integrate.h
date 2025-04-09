@@ -8,7 +8,7 @@ public:
   Integrator() = default;
   virtual ~Integrator() = default;
 
-  virtual std::vector<T> integrate(const std::vector<double> &u, double dt,
+  virtual std::vector<T> integrate(const std::vector<T> &u, T dt,
                                    const Differentiator<T> &differentiator) = 0;
 
 protected:

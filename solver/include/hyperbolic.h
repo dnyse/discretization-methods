@@ -14,7 +14,8 @@
 #include <chrono>
 #include <cmath>
 
-// Exact solution for the hyperbolic problem
+// Using functions from TestFunctions namespace
+using namespace TestFunctions;
 
 template <NumericType T>
 class HyperbolicSolver {
@@ -52,7 +53,8 @@ public:
         // Initialize solution vector with initial condition
         u_ = std::vector<T>(N + 1);
         for (int i = 0; i <= N; i++) {
-            u_[i] = hyperbolic_initial_u<T>(differentiator_->get_x()[i]);
+            // Make sure to pass 0 as the second argument to avoid ambiguity
+            u_[i] = TestFunctions::hyperbolic_initial_u<T>(differentiator_->get_x()[i], 0);
         }
     }
     
@@ -61,9 +63,6 @@ public:
         
         T t = T(0);
         for (int step = 0; step < num_steps_; ++step) {
-            // Compute the right-hand side: F(u) = -2π * du/dx
-            std::vector<T> F = differentiator_->compute_F(u_);
-            
             // Perform time integration step
             u_ = integrator_->integrate(u_, dt_, *differentiator_);
             
@@ -77,7 +76,7 @@ public:
         // Compute exact solution for comparison
         u_exact_ = std::vector<T>(N_ + 1);
         for (int i = 0; i <= N_; i++) {
-            u_exact_[i] = hyperbolic_exact_u<T>(differentiator_->get_x()[i], t_final_);
+            u_exact_[i] = TestFunctions::hyperbolic_exact_u<T>(differentiator_->get_x()[i], t_final_);
         }
     }
     
@@ -175,13 +174,6 @@ void convergence_study() {
         errors_fourier[i] = error_fourier;
         times_fourier[i] = time_fourier;
         std::cout << std::setw(20) << error_fourier << std::endl;
-        
-        // Save the results for the largest N value
-        // if (N == 2048) {
-        //     solver_second.save_results("second_order_2048.csv");
-        //     solver_fourth.save_results("fourth_order_2048.csv");
-        //     solver_fourier.save_results("fourier_2048.csv");
-        // }
     }
     
     // Calculate convergence rates
@@ -275,28 +267,7 @@ void long_time_integration() {
         
         std::cout << "  Second order (N=" << N_second << ") error: " << error_second << std::endl;
         std::cout << "  Fourier (N=" << N_fourier << ") error: " << error_fourier << std::endl;
-        
-        // // Save results to files
-        // std::string second_file = "second_order_t" + std::to_string(static_cast<int>(t_final)) + ".csv";
-        // std::string fourier_file = "fourier_t" + std::to_string(static_cast<int>(t_final)) + ".csv";
-        // 
-        // solver_second.save_results(second_file);
-        // solver_fourier.save_results(fourier_file);
     }
 }
-
-// int main() {
-//     // Part (a): Convergence study
-//     std::cout << "EXERCISE 3 - SCALAR HYPERBOLIC PROBLEM\n" << std::endl;
-//     std::cout << "Part (a): Convergence Study\n" << std::endl;
-//     convergence_study<double>();
-//     
-//     // Part (b): Long time integration comparison
-//     std::cout << "\nPart (b): Long Time Integration\n" << std::endl;
-//     long_time_integration<double>();
-//     
-//     return 0;
-// }
-//
 
 #endif  // INCLUDE_INCLUDE_HYPERBOLIC_H_

@@ -6,7 +6,7 @@
 template <NumericType T>
 class SecondOrderFiniteDiff : public Differentiator<T> {
 public:
-  SecondOrderFiniteDiff<T>() = default;
+  SecondOrderFiniteDiff() = default;  // Removed <T> from constructor
   void compute_num_sol() override;
   void create_grid_pts(int N) override;
 
@@ -16,7 +16,7 @@ private:
 
 template <NumericType T> class ForthOrderFiniteDiff : public Differentiator<T> {
 public:
-  ForthOrderFiniteDiff<T>() = default;
+  ForthOrderFiniteDiff() = default;  // Removed <T> from constructor
   void compute_num_sol() override;
   void create_grid_pts(int N) override;
 

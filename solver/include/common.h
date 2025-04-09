@@ -51,6 +51,7 @@ template <NumericType T> T func_ex02_2_du(T x, int k = 0) {
 
 template <NumericType T> T func_ex02_3_du(T x, int k = 0) { return T(1); }
 
+// Hyperbolic PDE functions - KEEP ONLY ONE VERSION
 template <NumericType T> T hyperbolic_exact_u(T x, T t) {
   return exp(sin(x - T(2) * MathConstants<T>::PI() * t));
 }
