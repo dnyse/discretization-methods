@@ -55,7 +55,8 @@ template <NumericType T> T Differentiator<T>::L_2_error() const {
   for (int i = 0; i < x_.size(); i++) {
     L_2 += abs_diffs[i] * abs_diffs[i];
   }
-  L_2 = sqrt(L_2 / x_.size()); // Normalized by number of points
+  // L_2 = sqrt(L_2 / x_.size()); // Normalized by number of points
+  L_2 = sqrt(L_2); // Normalized by number of points
   return L_2;
 }
 

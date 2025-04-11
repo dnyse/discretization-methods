@@ -40,11 +40,11 @@ public:
     // Set different dt based on the method type
     if (dynamic_cast<SecondOrderFiniteDiff<T> *>(differentiator_.get())) {
       dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
-    } else if (dynamic_cast<ForthOrderFiniteDiff<T> *>(differentiator_.get())) {
-      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
+    } else if (dynamic_cast<FourthOrderFiniteDiff<T> *>(differentiator_.get())) {
+      dt_ = T(0.25) * dx / (T(2) * MathConstants<T>::PI());
     } else {
       // Fourier method - more restrictive for stability
-      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.1) * dx / (T(2) * MathConstants<T>::PI());
     }
 
     // Adjust dt to ensure we hit t_final exactly
@@ -161,7 +161,7 @@ template <NumericType T> void convergence_study() {
               << error_second;
 
     // Fourth order method
-    auto fourth_order = std::make_shared<ForthOrderFiniteDiff<T>>();
+    auto fourth_order = std::make_shared<FourthOrderFiniteDiff<T>>();
     HyperbolicSolver<T> solver_fourth(fourth_order);
     solver_fourth.initialize(N, t_final);
     solver_fourth.solve();
