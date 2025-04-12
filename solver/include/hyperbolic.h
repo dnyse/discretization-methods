@@ -6,6 +6,8 @@
 #include "finite_diff.h"
 #include "fourier.h"
 #include "integrate.h"
+#include "matplot/freestanding/plot.h"
+#include <assert.h>
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -127,6 +129,18 @@ private:
   int num_steps_;
   double computation_time_;
 };
+
+template <NumericType T>
+void plot_func(std::vector<T> &x, std::vector<T> &u_exact,
+               std::vector<T> &u_numeric) {
+  auto fig = matplot::figure(true);
+  fig->quiet_mode(true);
+  fig->backend()->run_command("unset warnings");
+  matplot::plot(x, u_exact, "r")->line_width(3);
+  matplot::hold(true);
+  matplot::plot(x, u_numeric, "b")->line_width(3);
+  matplot::show();
+}
 
 // Function to run convergence study
 template <NumericType T> void convergence_study() {
@@ -268,8 +282,13 @@ template <NumericType T> void long_time_integration() {
     HyperbolicSolver<T> solver_second(second_order);
     solver_second.initialize(N_second, t_final);
     solver_second.solve();
-    auto [x, u_second, u_exact, error_second, time_second] =
+    auto [x_second, u_second, u_exact_second, error_second, time_second] =
         solver_second.get_results();
+    assert(u_exact_second.empty());
+		solver_second.
+    std::cout << "x_exact_second empty";
+
+    plot_func(x_second, u_exact_second, u_second);
 
     // Fourier
     auto fourier = std::make_shared<SpectralFourier<T>>(MethodType::ODD);
@@ -277,19 +296,18 @@ template <NumericType T> void long_time_integration() {
     HyperbolicSolver<T> solver_fourier(fourier);
     solver_fourier.initialize(N_fourier, t_final);
     solver_fourier.solve();
-    auto [_, u_fourier, __, error_fourier, time_fourier] =
+    auto [x_fourier, u_fourier, u_exact_fourier, error_fourier, time_fourier] =
         solver_fourier.get_results();
+
+    assert(u_exact_fourier.empty());
+    std::cout << "x_exact_fourier empty";
+
+    plot_func(x_fourier, u_exact_fourier, u_fourier);
 
     std::cout << "  Second order (N=" << N_second << ") error: " << error_second
               << std::endl;
     std::cout << "  Fourier (N=" << N_fourier << ") error: " << error_fourier
               << std::endl;
-
-    auto fig = matplot::figure(true);
-    fig->quiet_mode(true);
-    fig->backend()->run_command("unset warnings");
-    matplot::plot(x, u_exact, "g", x, u_second, "b", x, u_fourier, "r");
-    matplot::show();
   }
 }
 
