@@ -7,7 +7,6 @@
 #include "fourier.h"
 #include "integrate.h"
 #include "matplot/freestanding/plot.h"
-#include <assert.h>
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -132,14 +131,26 @@ private:
 
 template <NumericType T>
 void plot_func(std::vector<T> &x, std::vector<T> &u_exact,
-               std::vector<T> &u_numeric) {
-  auto fig = matplot::figure(true);
+               std::vector<T> &u_numeric, std::string type, int t) {
+  using namespace matplot;
+  auto fig = figure(true);
   fig->quiet_mode(true);
   fig->backend()->run_command("unset warnings");
-  matplot::plot(x, u_exact, "r")->line_width(3);
-  matplot::hold(true);
-  matplot::plot(x, u_numeric, "b")->line_width(3);
-  matplot::show();
+  auto p2 = plot(x, u_numeric, "b-o");
+  p2->line_width(2);
+  p2->display_name("Numerical Solution");
+  hold(true);
+  auto p1 = plot(x, u_exact, "r");
+  p1->line_width(2);
+  p1->display_name("Analytical Solution");
+
+  hold(false);
+  xlabel("x");
+  ylabel("u(x,t)");
+  title("Solution for Hyperbolic Problem at t=" + std::to_string(t) +
+        " using " + type);
+  ::matplot::legend({});
+  show();
 }
 
 // Function to run convergence study
@@ -284,11 +295,9 @@ template <NumericType T> void long_time_integration() {
     solver_second.solve();
     auto [x_second, u_second, u_exact_second, error_second, time_second] =
         solver_second.get_results();
-    assert(u_exact_second.empty());
-		solver_second.
-    std::cout << "x_exact_second empty";
 
-    plot_func(x_second, u_exact_second, u_second);
+    plot_func(x_second, u_exact_second, u_second, "SecondOrderFiniteDiff",
+              int(t_final));
 
     // Fourier
     auto fourier = std::make_shared<SpectralFourier<T>>(MethodType::ODD);
@@ -299,10 +308,8 @@ template <NumericType T> void long_time_integration() {
     auto [x_fourier, u_fourier, u_exact_fourier, error_fourier, time_fourier] =
         solver_fourier.get_results();
 
-    assert(u_exact_fourier.empty());
-    std::cout << "x_exact_fourier empty";
-
-    plot_func(x_fourier, u_exact_fourier, u_fourier);
+    plot_func(x_fourier, u_exact_fourier, u_fourier, "SpectralFourier",
+              int(t_final));
 
     std::cout << "  Second order (N=" << N_second << ") error: " << error_second
               << std::endl;
