@@ -1,0 +1,23 @@
+\section{ODD vs. EVEN Method}
+
+Based on the numerical evidence presented in Table~\ref{tab:fourier-comparison}, the EVEN Fourier differentiation method is generally more accurate and computationally efficient than the ODD method for approximating derivatives of the function $u(x) = \exp(k\sin(x))$. The EVEN method achieves smaller maximum relative errors in most cases while requiring fewer grid points, which translates to computational savings.
+The superior performance of the EVEN method is particularly pronounced for higher values of $k$ where the function oscillates more rapidly and presents a more challenging differentiation problem. This suggests that the EVEN method may be particularly advantageous for highly oscillatory functions.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|cc|cc|}
+		\hline
+		\multirow{2}{*}{$k$} & \multicolumn{2}{c|}{ODD Method} & \multicolumn{2}{c|}{EVEN Method}                                       \\
+		\cline{2-5}
+		                     & Minimum $N$                     & Max Relative Error               & Minimum $N$ & Max Relative Error    \\
+		\hline
+		2                    & 22                              & $3.78 \times 10^{-6}$            & 20          & $3.13 \times 10^{-6}$ \\
+		4                    & 32                              & $5.62 \times 10^{-6}$            & 32          & $3.02 \times 10^{-7}$ \\
+		6                    & 42                              & $4.12 \times 10^{-6}$            & 40          & $1.19 \times 10^{-6}$ \\
+		8                    & 52                              & $2.43 \times 10^{-6}$            & 48          & $3.37 \times 10^{-6}$ \\
+		10                   & 60                              & $7.89 \times 10^{-6}$            & 56          & $8.22 \times 10^{-6}$ \\
+		12                   & 70                              & $3.87 \times 10^{-6}$            & 68          & $5.79 \times 10^{-7}$ \\
+		\hline
+	\end{tabular}
+	\caption{Comparison of ODD and EVEN Fourier Differentiation Methods for $u(x) = \exp(k\sin(x))$}
+	\label{tab:fourier-comparison}
+\end{table}
