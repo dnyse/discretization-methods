@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <matplot/matplot.h>
 #include <memory>
 #include <string>
 
@@ -40,7 +41,8 @@ public:
     // Set different dt based on the method type
     if (dynamic_cast<SecondOrderFiniteDiff<T> *>(differentiator_.get())) {
       dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
-    } else if (dynamic_cast<FourthOrderFiniteDiff<T> *>(differentiator_.get())) {
+    } else if (dynamic_cast<FourthOrderFiniteDiff<T> *>(
+                   differentiator_.get())) {
       dt_ = T(0.25) * dx / (T(2) * MathConstants<T>::PI());
     } else {
       // Fourier method - more restrictive for stability
@@ -66,7 +68,7 @@ public:
     T t = T(0);
     for (int step = 0; step < num_steps_; ++step) {
       // Perform time integration step
-			// std::cout << "Timestep: " << step << std::endl;
+      // std::cout << "Timestep: " << step << std::endl;
       u_ = integrator_->integrate(
           u_, dt_, *differentiator_); // This will now use the non-const version
 
@@ -254,7 +256,7 @@ template <NumericType T> void long_time_integration() {
   int N_second = 200;
 
   // Fourier with N=10 as specified in the exercise
-  int N_fourier = 200;
+  int N_fourier = 10;
 
   std::cout << "\nPerforming long time integration comparison..." << std::endl;
 
@@ -266,21 +268,28 @@ template <NumericType T> void long_time_integration() {
     HyperbolicSolver<T> solver_second(second_order);
     solver_second.initialize(N_second, t_final);
     solver_second.solve();
-    auto [_, __, ___, error_second, time_second] = solver_second.get_results();
+    auto [x, u_second, u_exact, error_second, time_second] =
+        solver_second.get_results();
 
     // Fourier
     auto fourier = std::make_shared<SpectralFourier<T>>(MethodType::ODD);
-    fourier->build(N_fourier);  // Build with N=10
+    fourier->build(N_fourier); // Build with N=10
     HyperbolicSolver<T> solver_fourier(fourier);
     solver_fourier.initialize(N_fourier, t_final);
     solver_fourier.solve();
-    auto [____, _____, ______, error_fourier, time_fourier] =
+    auto [_, u_fourier, __, error_fourier, time_fourier] =
         solver_fourier.get_results();
 
     std::cout << "  Second order (N=" << N_second << ") error: " << error_second
               << std::endl;
     std::cout << "  Fourier (N=" << N_fourier << ") error: " << error_fourier
               << std::endl;
+
+    auto fig = matplot::figure(true);
+    fig->quiet_mode(true);
+    fig->backend()->run_command("unset warnings");
+    matplot::plot(x, u_exact, "g", x, u_second, "b", x, u_fourier, "r");
+    matplot::show();
   }
 }
 

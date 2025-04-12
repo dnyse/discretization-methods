@@ -44,16 +44,23 @@ message(STATUS "Boost version: ${Boost_VERSION}")
 include_directories(${Boost_INCLUDE_DIRS})
 add_compile_definitions(HAVE_BOOST)
 
+# Find and enable OpenMP
+find_package(OpenMP REQUIRED)
+if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP found. Adding compiler flags: ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
 
-# FetchContent_Declare(matplotplusplus
-#         GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
-#         GIT_TAG origin/master)
-#
-# FetchContent_GetProperties(matplotplusplus)
-# if(NOT matplotplusplus_POPULATED)
-#     FetchContent_Populate(matplotplusplus)
-#     add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
-# endif()
+
+FetchContent_Declare(matplotplusplus
+        GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
+        GIT_TAG origin/master)
+
+FetchContent_GetProperties(matplotplusplus)
+if(NOT matplotplusplus_POPULATED)
+    FetchContent_Populate(matplotplusplus)
+    add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # Include directory
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -64,6 +71,10 @@ file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/include/*.h)
 
 # Create executable or library
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+# Link OpenMP
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+
 
 # Link Matplot++ (Even though it's header-only, this ensures compatibility)
 target_link_libraries(${PROJECT_NAME} PUBLIC matplot)

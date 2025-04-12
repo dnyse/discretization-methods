@@ -4,6 +4,7 @@
 #include "diff.h"
 #include "error.h"
 #include <iostream>
+#include <omp.h>
 
 template <NumericType T> class SpectralFourier : public Differentiator<T> {
 public:
@@ -70,10 +71,34 @@ template <NumericType T> void SpectralFourier<T>::create_grid_pts(int N) {
 }
 
 template <NumericType T> void SpectralFourier<T>::compute_num_sol() {
-  this->numerical_du_ = std::vector<T>(this->x_.size());
-  for (int j = 0; j < this->analytical_u_.size(); j++) {
-    for (int i = 0; i < this->analytical_u_.size(); i++) {
-      this->numerical_du_[j] += D_[j][i] * this->analytical_u_[i];
+  int size = this->analytical_u_.size();
+  this->numerical_du_ = std::vector<T>(size, T(0));
+
+  // For small matrices, use direct matrix-vector multiplication
+  if (size <= 1000) {
+#pragma omp parallel for
+    for (int j = 0; j < size; j++) {
+      T sum = T(0);
+      for (int i = 0; i < size; i++) {
+        sum += D_[j][i] * this->analytical_u_[i];
+      }
+      this->numerical_du_[j] = sum;
+    }
+  }
+  // For larger matrices, use block-based approach to improve cache efficiency
+  else {
+    const int block_size = 64; // Adjust based on cache size
+
+#pragma omp parallel for
+    for (int j = 0; j < size; j++) {
+      T sum = T(0);
+      for (int i_block = 0; i_block < size; i_block += block_size) {
+        int i_end = std::min(i_block + block_size, size);
+        for (int i = i_block; i < i_end; i++) {
+          sum += D_[j][i] * this->analytical_u_[i];
+        }
+      }
+      this->numerical_du_[j] = sum;
     }
   }
 }

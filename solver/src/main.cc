@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "hyperbolic.h"
+#include <omp.h>
 
 void analyze_convergence(SpectralFourier<double> &solver,
                          const std::vector<int> &N_values,
@@ -72,6 +73,11 @@ void print_summary(std::vector<int> &k_values,
 }
 
 int main() {
+	   // Print OpenMP status to verify it's working
+    std::cout << "\n=== OpenMP Status ===" << std::endl;
+    std::cout << "OpenMP Version: " << _OPENMP << std::endl;
+    std::cout << "Number of available threads: " << omp_get_max_threads() << std::endl;
+
     // Print header for Exercise 1
     std::cout << "\n===================================================" << std::endl;
     std::cout << "EXERCISE 1 - FOURIER DIFFERENTIATION (EVEN vs ODD)" << std::endl;
@@ -114,22 +120,22 @@ int main() {
     // This behavior is expected for Fourier methods with smooth periodic functions.
     std::cout << "\nFunction: cos(10x)" << std::endl;
     SpectralFourier<double> solver_even_double(MethodType::EVEN);
-    analyze_convergence(solver_even_double, N_values,
-                      TestFunctions::func_ex02_1_u<double>,
-                      TestFunctions::func_ex02_1_du<double>);
+    // analyze_convergence(solver_even_double, N_values,
+    //                   TestFunctions::func_ex02_1_u<double>,
+    //                   TestFunctions::func_ex02_1_du<double>);
                       
     // For cos(x/2) on a [0,2π] domain, the function is not periodic (one full
     // period would require [0,4π]), which explains the poor performance.
     std::cout << "\nFunction: cos(x/2)" << std::endl;
-    analyze_convergence(solver_even_double, N_values,
-                      TestFunctions::func_ex02_2_u<double>,
-                      TestFunctions::func_ex02_2_du<double>);
+    // analyze_convergence(solver_even_double, N_values,
+    //                   TestFunctions::func_ex02_2_u<double>,
+    //                   TestFunctions::func_ex02_2_du<double>);
                       
     // Fourier methods are known to perform poorly for non-periodic functions.
     std::cout << "\nFunction: x" << std::endl;
-    analyze_convergence(solver_even_double, N_values,
-                      TestFunctions::func_ex02_3_u<double>,
-                      TestFunctions::func_ex02_3_du<double>);
+    // analyze_convergence(solver_even_double, N_values,
+    //                   TestFunctions::func_ex02_3_u<double>,
+    //                   TestFunctions::func_ex02_3_du<double>);
 
     // Print header for Exercise 3
     std::cout << "\n===================================================" << std::endl;
@@ -138,7 +144,7 @@ int main() {
     
     // Part (a): Convergence study
     std::cout << "\nPart (a): Convergence Study\n" << std::endl;
-    convergence_study<double>();
+    // convergence_study<double>();
     
     // Part (b): Long time integration comparison
     std::cout << "\nPart (b): Long Time Integration\n" << std::endl;

@@ -56,24 +56,24 @@ template <NumericType T> void FourthOrderFiniteDiff<T>::compute_num_sol() {
   // For j = 0, we need indices -2, -1, 1, 2 which map to N-2, N-1, 1, 2
   this->numerical_du_[0] =
       (-this->analytical_u_[2] + 8.0 * this->analytical_u_[1] -
-       8.0 * this->analytical_u_[N - 1] + this->analytical_u_[N - 2]) /
+       8.0 * this->analytical_u_[N] + this->analytical_u_[N - 1]) /
       (12.0 * dx_);
 
   // For j = 1, we need indices -1, 0, 2, 3 which map to N-1, 0, 2, 3
   this->numerical_du_[1] =
       (-this->analytical_u_[3] + 8.0 * this->analytical_u_[2] -
-       8.0 * this->analytical_u_[0] + this->analytical_u_[N - 1]) /
+       8.0 * this->analytical_u_[0] + this->analytical_u_[N]) /
       (12.0 * dx_);
 
   // For j = N-1, we need indices N-3, N-2, N, N+1 which map to N-3, N-2, 0, 1
   this->numerical_du_[N - 1] =
-      (-this->analytical_u_[1] + 8.0 * this->analytical_u_[0] -
+      (-this->analytical_u_[0] + 8.0 * this->analytical_u_[N] -
        8.0 * this->analytical_u_[N - 2] + this->analytical_u_[N - 3]) /
       (12.0 * dx_);
 
   // For j = N, we need indices N-2, N-1, N+1, N+2 which map to N-2, N-1, 1, 2
   this->numerical_du_[N] =
-      (-this->analytical_u_[2] + 8.0 * this->analytical_u_[1] -
+      (-this->analytical_u_[1] + 8.0 * this->analytical_u_[0] -
        8.0 * this->analytical_u_[N - 1] + this->analytical_u_[N - 2]) /
       (12.0 * dx_);
 }
