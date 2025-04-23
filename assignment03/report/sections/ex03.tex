@@ -38,4 +38,23 @@ Substituting both terms back into the residual results in
 	R_N(x, t) = \sum_{n=0}^{N+2} \frac{d\hat{u}_n(t)}{dt} \cos(nx) -  \sin(x) \sum_{n=0}^{N+2} \hat{u}_n(t) n \sin(nx)
 	\label{eq:res3}
 \end{equation}
-We choose as the test function $\psi_m(x) = cos(mx)$ for $m \in [0, N]$
+We choose as the test function $\psi_m(x) = \frac{2}{\pi}cos(mx)$ for $m \in [0, N]$ with weight function $w(x) = 1$
+\begin{equation}
+	(\phi_n, \psi_m)_w = \int_0^{\pi} \cos(mx) \frac{2}{\pi}\cos(nx) dx = \delta_{mn}
+	\label{eq:weight_f}
+\end{equation}
+We require that the residual is orthogonal to these test functions:
+$(R_N, \psi_m)_w = 0 \quad \text{for all } m$\\
+This gives us:
+\begin{equation}
+	\left(R_N, \psi_m\right)_w  = \frac{2}{\pi} \int_0^{\pi} \left ( \sum_{n=0}^{N+2} \frac{d\hat{u}_n(t)}{dt} \cos(nx) - \sin(x)  \sum_{n=0}^{N+2} \hat{u}_n(t) n \sin(nx) \right) \cos(mx) dx = 0
+	\label{eq:res_der}
+\end{equation}
+Looking at each term individually we get using orthogonality
+\begin{equation}
+	\frac{2}{\pi}\sum_{n=0}^{N+2} \frac{d\hat{u}_n(t)}{dt} \int_0^\pi \cos(nx) \cos(mx) dx = \begin{cases}
+		\frac{d\hat{u}_m(t)}{dt} & \text{if } m\neq 0 \\
+		2\frac{d\hat{u}_0(t)}{dt} & \text{if } m=0
+	\end{cases}
+	\label{eq:ft3}
+\end{equation}
