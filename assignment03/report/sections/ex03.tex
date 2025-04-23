@@ -1,1 +1,41 @@
-
+\section{Tau Approximation}
+We are considering the variable coefficient problem
+\begin{equation}
+	\frac{\partial u}{\partial t}+\sin (x) \frac{\partial u}{\partial x}=0
+	\label{eq:pde3}
+\end{equation}
+with Dirichlet boundary conditions
+\begin{equation}
+	u(0,t) = u(\pi, t) = 0.
+	\label{eq:bdc3}
+\end{equation}
+The solution approximation is given by:
+\begin{equation}
+	u_N(x,t) = \sum_{n=0}^{N+N_b} \hat{u}_n(t)\cos(nx)
+	\label{eq:sol_approx}
+\end{equation}
+where $N_b = 2$ is the number of boundary conditions.\newline
+Important to note is that the basis function $\cos(nx)$ does not on its own satisfy the boundary conditions.
+The residual is then given as
+\begin{equation}
+	R_N(x, t) = \frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x}
+\end{equation}
+Computing each term we get:
+\begin{itemize}
+	\item \textit{Time derivative}:
+	      \begin{equation}
+		      \frac{\partial u_N}{\partial t} = \sum_{n=0}^{N+2} \frac{d\hat{u}_n(t)}{dt} \cos(nx)
+		      \label{eq:tim_derv3}
+	      \end{equation}
+	\item \textit{Spatial derivative}:
+	      \begin{equation}
+		      \frac{\partial u_N}{\partial x} = \sum_{n=0}^{N+2} -\hat{u}_n(t) n \sin(nx)
+		      \label{eq:spat_derv3}
+	      \end{equation}
+\end{itemize}
+Substituting both terms back into the residual results in
+\begin{equation}
+	R_N(x, t) = \sum_{n=0}^{N+2} \frac{d\hat{u}_n(t)}{dt} \cos(nx) -  \sin(x) \sum_{n=0}^{N+2} \hat{u}_n(t) n \sin(nx)
+	\label{eq:res3}
+\end{equation}
+We choose as the test function $\psi_m(x) = cos(mx)$ for $m \in [0, N]$

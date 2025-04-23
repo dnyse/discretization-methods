@@ -38,30 +38,26 @@ The Residual is now given as follows
 \begin{equation}
 	R_N(x, t)=\frac{\partial u_N}{\partial t}-\mathcal{L} u_N = \frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x}
 \end{equation}
-and we need to enforce $\left(R_N, \psi_m\right)_w=0, \forall m \in[-N / 2, N / 2]$, where $\psi_m=\frac{1}{\gamma_m} \phi_m$, so that $\left(\phi_m, \psi_n\right)_w=\delta_{m n}$.
+We enforce $\left(R_N, \psi_m\right)_w=0, \forall m \in[-N / 2, N / 2]$, where $\psi_m=\frac{1}{\gamma_m} \phi_m$, so that $\left(\phi_m, \psi_n\right)_w=\delta_{m n}$.
 \begin{equation}
-	\left(R_N, \psi_m\right)_w = \int_0^{2\pi} \left(\frac{\partial u_N}{\partial t}-\mathcal{L} u_N \right)\overline{\psi_m}wdx = \int_0^{2\pi} \left (  \frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x} \right) e^{-imx} = 0
+	\left(R_N, \psi_m\right)_w = \int_0^{2\pi} \left(\frac{\partial u_N}{\partial t}-\mathcal{L} u_N \right)\overline{\psi_m}wdx = \int_0^{2\pi} \left (  \frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x} \right) \frac{1}{2\pi}e^{-imx} = 0
 	\label{eq:res}
 \end{equation}
-where $w$ is chosen to be $w(x) = 1$ so that
+Choosing $w(x) = 1$, and using orthonormal basis $\psi_m(x) = \frac{1}{2\pi}e^{imx}$, we have:
 \begin{equation}
-	(\psi_n, \psi_m)_w = \int_0^{2\pi} e^{inx} e^{-imx} = 2 \pi \delta_{nm} = \begin{cases}
-		2 \pi & \text{if } n = m    \\
-		0     & \text{if } n \neq m
-	\end{cases}
+	(\phi_n, \psi_m)_w = \int_0^{2\pi} e^{inx} \cdot \frac{1}{2\pi} e^{-imx} dx = \delta_{nm}.
 	\label{eq:weight_f}
 \end{equation}
-so in this case $\psi_m = \frac{1}{2\pi}e^{-imx}$, thus $\psi_m(x) = \phi_m(x) = e^{imx}$. \\
-If we now plugin the results of \eqref{eq:time_der} and \eqref{eq:spat_der} into \eqref{eq:res} we get
+We now plugin the results of \eqref{eq:time_der} and \eqref{eq:spat_der} into \eqref{eq:res} we get
 \begin{equation}
 	\begin{aligned}
-		\left(R_N, \psi_m\right)_w & = \int_0^{2\pi} \left (  \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} \frac{d \hat{u}_n}{dt} e^{inx} +   \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n \sin(x)  e^{inx} \right) e^{-imx} \\
+		\left(R_N, \psi_m\right)_w &= \int_0^{2\pi} \left( \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} \frac{d \hat{u}_n}{dt} e^{inx} + \sin(x) \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n e^{inx} \right) \cdot \frac{1}{2\pi} e^{-imx} dx.
 	\end{aligned}
 	\label{eq:res_der}
 \end{equation}
 First lets simplify the first term inside the integral
 \begin{equation}
-	\int_0^{2 \pi} \sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} e^{inx}  e^{-imx} dx = \sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} \int_0^{2 \pi} e^{i(n-m)x} = \sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} 2 \pi \delta_{nm} = 2 \pi \frac{d \hat{u}_m}{dt}
+	\int_0^{2 \pi} \sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} e^{inx} \frac{1}{2\pi} e^{-imx} dx = \frac{1}{2\pi}\sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} \int_0^{2 \pi} e^{i(n-m)x} = \frac{1}{2\pi}\sum_{n=-\frac{N}{2}}^{\frac{N}{2}}  \frac{d \hat{u}_n}{dt} 2 \pi \delta_{nm} = \frac{d \hat{u}_m}{dt}
 	\label{eq:res_first}
 \end{equation}
 For the second term we can rewrite sine as
@@ -72,8 +68,8 @@ For the second term we can rewrite sine as
 and then substitute it into the second term
 \begin{equation}
 	\begin{aligned}
-		\int_0^{2\pi} \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n \sin(x)  e^{inx} e^{-imx} dx & =  \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n  \int_0^{2\pi} \frac{e^{ix} - e^{-ix}}{2i} e^{i(n-m)x} dx       \\
-		                                                                                             & =   \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n  \int_0^{2\pi} \frac{e^{i(n-m + 1)x} - e^{i(n-m -1) x}}{2i} dx \\
+		\int_0^{2\pi} \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n \sin(x)  e^{inx} \frac{1}{2\pi} e^{-imx} dx & = \frac{1}{2\pi}  \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n  \int_0^{2\pi} \frac{e^{ix} - e^{-ix}}{2i} e^{i(n-m)x} dx       \\
+		                                                                                             & =  \frac{1}{2\pi}  \sum_{n=-\frac{N}{2}}^{\frac{N}{2}} i n \hat{u}_n  \int_0^{2\pi} \frac{e^{i(n-m + 1)x} - e^{i(n-m -1) x}}{2i} dx \\
 		\label{eq:res_second}
 	\end{aligned}
 \end{equation}
@@ -87,12 +83,12 @@ using the orthogonality property again, this integral becomes non-zero only when
 \end{equation}
 Therefore the second term becomes
 \begin{equation}
-	i(m-1)\hat{u}_{m-1} \frac{\int_0^{2\pi} e^0 dx}{2i} - i(m+1) \hat{u}_{m+1} \frac{\int_0^{2\pi} e^0 dx}{2i} = \pi \left [ (m - 1)\hat{u}_{m-1} - (m+1) \hat{u}_{m+1}  \right]
+	i(m-1)\hat{u}_{m-1} \frac{1}{2\pi} \frac{\int_0^{2\pi} e^0 dx}{2i} - i(m+1) \hat{u}_{m+1} \frac{1}{2\pi} \frac{\int_0^{2\pi} e^0 dx}{2i} = \frac{1}{2}  \left [ (m - 1)\hat{u}_{m-1} - (m+1) \hat{u}_{m+1}  \right]
 	\label{eq:res_second_final}
 \end{equation}
 Now we can combine both terms, resulting in
 \begin{equation}
-	2 \pi \frac{d \hat{u}_m}{dt} + \pi \left [ (m - 1)\hat{u}_{m-1} - (m+1) \hat{u}_{m+1}  \right] = 0
+	\frac{d \hat{u}_m}{dt} + \frac{1}{2} \left [ (m - 1)\hat{u}_{m-1} - (m+1) \hat{u}_{m+1}  \right] = 0
 	\label{eq:res_eqs}
 \end{equation}
 Rearranging this result leads to our systems of ODEs for the Fourier-Galerking approximation
