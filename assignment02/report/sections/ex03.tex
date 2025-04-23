@@ -1,87 +1,174 @@
 \section{Scalar Hyperbolic Problem}
+This exercise is dedicated on solving a scalar hyperbolic problem given as
+\begin{equation}
+	\begin{gathered}
+		\frac{\partial u(x, t)}{\partial t}=-2 \pi \frac{\partial u(x, t)}{\partial x} \\
+		u(0, t)=u(2 \pi, t) \\
+		u(x, 0)=\exp [\sin (x)]
+	\end{gathered}
+\end{equation}
+where $u(x,t) \in C^\infty[0, 2\pi]$ is assumed periodic. This represents a wave propagating at velocity $2\pi$ in the positive x-direction, while keeping its shape.
+This problem is in particular appealing due to the existence of a known analytical solution
+\begin{equation}
+	u(x, t)=\exp [\sin (x-2 \pi t)],
+\end{equation}
+making it ideal to benchmark different numerical differentiation methods.
+For the time integration, the fourth-order Runga-Kutta method was implemented, which provides high accuracy for temporal discretization.
+Thus being able to focus on the analysis of the following three different spatial discretization schemes:
+\begin{itemize}
+	\item Second-order centered finite difference approximation
+	      \begin{equation}
+		      \left.\frac{d u}{d x}\right|_{x_j}=\frac{u_{j+1}-u_{j-1}}{2 \Delta x} .
+	      \end{equation}
+	\item Fourth-order centered finite difference approximation
+	      \begin{equation}
+		      \left.\frac{d u}{d x}\right|_{x_j}=\frac{u_{j-2}-8 u_{j-1}+8 u_{j+1}-u_{j+2}}{12 \Delta x} .
+	      \end{equation}
+	\item Global infinite-order approximation using the Odd Fourier method.
+	      \begin{equation}
+		      \left.\frac{d u}{d x}\right|_{x_j}=\sum_{i=0}^N \tilde{D}_{j i} u_i
+	      \end{equation}
+\end{itemize}
+By looking into the $L_\infty$ error convergence rates and their long-term behaviors, we can evaluate their efficiency, accuracy, and stability characteristics for scalar hyperbolic problems.
+
 \subsection{Convergence Analysis}
+The $L_\infty$ error data in Table~\ref{tab:hyperbolic_error} and the corresponding convergence rates in Table~\ref{tab:hyperbolic_rates} for the problem at $t = \pi$ reveals distinct coverngence behaviors.
+\begin{itemize}
+	\item \textbf{Second-Order Scheme}
+	      \begin{itemize}
+		      \item Starts with a rather high error and steadily converges as N increases.
+		      \item Achieves a final error ($N=2048$) of $1.26 \times 10^{-4}$ .
+		      \item The stabilization of the convergence rate happenst at $N \geq 128$ and $\approx 2.0$, perfectly reflecting the theoretical second order accuracy.
+	      \end{itemize}
+	\item \textbf{Fourth-Order Scheme}
+	      \begin{itemize}
+		      \item Has an initial error which is lower than the second order scheme.
+		      \item Also shows significantly faster error reduction rate.
+		      \item Reaching a final error value ($N=2048$) of $1.45 \times 10^{-9}$.
+		      \item Convergences rate stabilizes at $\approx 4.0$ for $N \geq 512$, reflecting the theoretical fourth-order accuracy.
+	      \end{itemize}
+		  \item \textbf{Fourier Scheme}
+      \begin{itemize}
+              \item Shows dramatically lower errors even at low resolution compared to the other methods.
+              \item Achieves extremely rapid initial convergence with a rate of 15.15 between N=8 and N=16.
+              \item Reaches machine precision at approximately N=16 with an error of $2.28 \times 10^{-8}$.
+              \item After reaching machine precision, error remains constant around $6.3 \times 10^{-9}$ for higher resolutions up to N=512.
+              \item Truncation to zero error at N=1024 and N=2048 indicates numerical precision limits.
+      \end{itemize}
+\end{itemize}
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
 		\hline
 		$N$  & Second Order          & Fourth Order          & Fourier                \\
 		\hline
-		8    & $1.73 \times 10^{0}$  & $6.37 \times 10^{-1}$ & $8.25 \times 10^{-4}$  \\
-		16   & $1.06 \times 10^{0}$  & $2.02 \times 10^{-1}$ & $7.45 \times 10^{-6}$  \\
-		32   & $4.41 \times 10^{-1}$ & $2.14 \times 10^{-2}$ & $5.25 \times 10^{-7}$  \\
-		64   & $1.32 \times 10^{-1}$ & $1.41 \times 10^{-3}$ & $3.54 \times 10^{-8}$  \\
-		128  & $3.26 \times 10^{-2}$ & $9.17 \times 10^{-5}$ & $2.30 \times 10^{-9}$  \\
-		256  & $8.06 \times 10^{-3}$ & $5.83 \times 10^{-6}$ & $1.47 \times 10^{-10}$ \\
-		512  & $2.01 \times 10^{-3}$ & $3.68 \times 10^{-7}$ & $1.16 \times 10^{-11}$ \\
-		1024 & $5.03 \times 10^{-4}$ & $2.31 \times 10^{-8}$ & $5.51 \times 10^{-12}$ \\
-		2048 & $1.26 \times 10^{-4}$ & $1.45 \times 10^{-9}$ & $1.05 \times 10^{-11}$ \\
+		8    & $1.73 \times 10^{0}$  & $6.38 \times 10^{-1}$ & $8.31 \times 10^{-4}$  \\
+		16   & $1.06 \times 10^{0}$  & $2.02 \times 10^{-1}$ & $2.28 \times 10^{-8}$  \\
+		32   & $4.42 \times 10^{-1}$ & $2.13 \times 10^{-2}$ & $6.20 \times 10^{-9}$  \\
+		64   & $1.31 \times 10^{-1}$ & $1.41 \times 10^{-3}$ & $6.34 \times 10^{-9}$  \\
+		128  & $3.26 \times 10^{-2}$ & $9.16 \times 10^{-5}$ & $6.36 \times 10^{-9}$  \\
+		256  & $8.06 \times 10^{-3}$ & $5.83 \times 10^{-6}$ & $6.36 \times 10^{-9}$  \\
+		512  & $2.01 \times 10^{-3}$ & $3.74 \times 10^{-7}$ & $6.36 \times 10^{-9}$  \\
+		1024 & $5.03 \times 10^{-4}$ & $2.94 \times 10^{-8}$ & $0.00 \times 10^{0}$   \\
+		2048 & $1.26 \times 10^{-4}$ & $7.80 \times 10^{-9}$ & $0.00 \times 10^{0}$   \\
 		\hline
 	\end{tabular}
 	\caption{$L_{\infty}$-Error for the Scalar Hyperbolic Problem at $t = \pi$}
 	\label{tab:hyperbolic_error}
 \end{table}
-
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
 		\hline
 		$N$  & Second Order & Fourth Order & Fourier \\
 		\hline
-		16   & 0.71         & 1.66         & 6.79    \\
-		32   & 1.26         & 3.24         & 3.83    \\
-		64   & 1.75         & 3.92         & 3.89    \\
-		128  & 2.01         & 3.94         & 3.95    \\
-		256  & 2.01         & 3.97         & 3.96    \\
-		512  & 2.00         & 3.99         & 3.66    \\
-		1024 & 2.00         & 3.99         & 1.08    \\
-		2048 & 2.00         & 3.99         & -0.92   \\
+		16   & 0.71         & 1.66         & 15.15   \\
+		32   & 1.26         & 3.24         & 1.88    \\
+		64   & 1.75         & 3.92         & -0.03   \\
+		128  & 2.01         & 3.95         & -0.00   \\
+		256  & 2.01         & 3.97         & 0.00    \\
+		512  & 2.00         & 3.96         & -0.00   \\
+		1024 & 2.00         & 3.67         & inf     \\
+		2048 & 2.00         & 1.91         & nan     \\
 		\hline
 	\end{tabular}
 	\caption{Convergence Rates for the Scalar Hyperbolic Problem}
 	\label{tab:hyperbolic_rates}
 \end{table}
+In conclusion, the observed convergence rates match the theoretical expectation for the finite difference schemes, while the Fourier method demonstrates spectacular convergence characteristics. It shows an extremely rapid initial error reduction (rate of 15.15), quickly reaching machine precision at merely N=16, after which the error remains constant due to floating-point limitations.\\
+\\
+In order to achieve the same error as the second-order scheme at $N=2048$ ($1.26 \times 10^{-4}$), the fourth-order scheme requires only approximately $N=128$ ($9.16 \times 10^{-5}$) grid points, while the Fourier scheme reaches far better accuracy with just $N=8$ ($8.31 \times 10^{-4}$) and dramatically better at $N=16$ ($2.28 \times 10^{-8}$). This demonstrates the exceptional efficiency of the spectral method, which achieves accuracy orders of magnitude better with far fewer grid points. These results demonstrate that the Fourier method should be the clear choice for problems with smooth, periodic solutions, where it can provide machine-precision accuracy with minimal computational resources.\\
+\\
+One final important note is how I addressed the challenge of $\pi$ being irrational, which means that any fixed time step $dt$ would likely not divide it evenly, making it difficult to reach $t_{final} = \pi$. I solved this issue, by setting $dt=0.001$ for all methods and then instead of taking $\pi$ as my $t_{final}$, I used:
+\begin{equation}
+	t^\prime_{final} = dt \cdot \lfloor t_{final} / dt \rfloor
+	\label{eq:tfinal}
+\end{equation}
 
 \subsection{Longterm Convergence}
+In this final exercise we analyze the longtime convergence behavior of the second-order ($N=200$) and spectral Fourier method ($N=10$), when solving the scalar hyperbolic problem, which is depicted in Figure~\ref{fig:figureLabel}. When looking at the time steps $t=0, 100, 200$ we can observe the following:
+\begin{itemize}
+	\item \textbf{Initial conditions ($t=0$)}
+	      \begin{itemize}
+		      \item \textbf{Second-Order Method}: This being the initial condition the analytical and numerical solution are identical.
+		      \item \textbf{Spectral Fourier Method}: Similar to the second-order method the analytical and numerical are identical.
+	      \end{itemize}
+	\item \textbf{Medium term ($t=100$)}
+	      \begin{itemize}
+		      \item \textbf{Second-Order Method}: Beginning to show phase and amplitude errors. The numerical solution has small oscillations are visible near steep gradients, furthermore  the solution is slightly shifted to the right.
+		      \item \textbf{Spectral Fourier Method}: Even with just $10$ grid points, the numerical solution maintains the identical shape to the analytical solution.
+	      \end{itemize}
 
+	\item \textbf{Long term ($t=200$)}
+	      \begin{itemize}
+		      \item \textbf{Second-Order Method}: Shows substantial degradation with the numerical solution now being noticeably out of phase. Around $x=5$ we can observe weird oscillations, particular in the region around $x=5$, which indicates numerical instability.
+		      \item \textbf{Spectral Fourier Method}: Continues of being identical to the analytical solution.
+	      \end{itemize}
+\end{itemize}
+These results lead to the following four key observations:
+\begin{enumerate}
+	\item \textbf{Stability}: Second Order method over time starts to accumulate phase errors and develops instabilities, while the spectral Fourier method maintains an exact solution.
+	\item \textbf{Efficiency}: The spectral method is significantly more efficient by representing very accurate numerical solution with 20 fold less grid points, compared to the second order.
+	\item \textbf{Dispersion}: The second order method showed typical dispersion characteristics, where different components propagate at different speeds, leading to phase errors. The spectral method didn't show any signs of dispersion characteristics.
+	\item \textbf{Resolution}: This comparison showed how dramatically better the Fourier method (global) can capture propagation dynamics with fewer grid points.
+\end{enumerate}
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SecondOrderFiniteDiff_0.png}
-		\caption{Second Order at $t=0$ with $L_\infty=0.0$}
+		\caption{Second Order at $t=0$}
 		\label{sfig:sublabel1}
 	\end{subfigure}%
 	~
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SpectralFourier_0.png}
-		\caption{Spectral Fourier at $t=0$ with $L_\infty=0.0$}
+		\caption{Spectral Fourier at $t=0$}
 		\label{sfig:sublabel2}
 	\end{subfigure}\\
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SecondOrderFiniteDiff_100.png}
-		\caption{Second Order at $t=100$ with $L_\infty = 4.0 \times 10^{-1}$}
+		\caption{Second Order at $t=100$}
 		\label{sfig:sublabel3}
 	\end{subfigure}%
 	~
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SpectralFourier_100.png}
-		\caption{Spectral Fourier at $t=100$ with $L_\infty = 1.3 \times 10^{-3}
-			$}
+		\caption{Spectral Fourier at $t=100$}
 		\label{sfig:sublabel4}
 	\end{subfigure}\\
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SecondOrderFiniteDiff_200.png}
-		\caption{Second Order at $t=200$ with $L_\infty = 6.3 \times 10^{-1}$}
+		\caption{Second Order at $t=200$}
 		\label{sfig:sublabel5}
 	\end{subfigure}%
 	~
 	\begin{subfigure}{0.5\textwidth}
 		\includegraphics[width=\textwidth]{media/hyperbolic_SpectralFourier_200.png}
-		\caption{Spectral Fourier at $t=200$ with $L_\infty = 2.3 \times 10^{-3}$}
+		\caption{Spectral Fourier at $t=200$}
 		\label{sfig:sublabel6}
 	\end{subfigure}
 
 	\caption{\textbf{Comparison of Second Order Finite Difference and Spectral Fourier}
-		captionText
 	}
 	\label{fig:figureLabel}
 \end{figure}

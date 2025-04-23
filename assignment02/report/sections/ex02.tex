@@ -1,63 +1,165 @@
 \section{Even Method for Various Types of Derivatives}
+In this exercise we compute the derivative using the Even Method over the interval $[0, 2 \pi]$ of the following functions
+\begin{itemize}
+	\item \textbf{Case 1}: $f(x) = \cos(10x)$
+	\item \textbf{Case 2}: $f(x) = \cos(x/2)$
+	\item \textbf{Case 3}: $f(x) = x$
+\end{itemize}
+Using the pointwise error $L_\infty$ and the global error $L_2$ for increasing values of $N$ we observe the following behavior in each of the cases.
+\subsection{Case 1}
+% Case 1: f(x) = cos(10x)
+% For f(x) = cos(10x), I observe:
+%
+% At N=8 and N=16, the errors are relatively large
+% At N=32, there's a dramatic drop in error (to ~10⁻¹⁴), indicating spectral convergence
+% For N>32, errors slightly increase again, suggesting numerical round-off effects
+%
+% The most striking feature is the exponential decrease in error at N=32, followed by a plateau or slight increase. This indicates that for this highly oscillatory function with frequency 10, we need at least 32 points to fully resolve the function (about 3 points per oscillation).
+For this case of function $f(x)=\cos(10x)$, we observe in Table~\ref{tab:cos10x} that
+\begin{itemize}
+	\item Initially, the errors increase from $N=8$ to $N=16$.
+	\item Then the error drops drastically to the order of $10^{-14}$ around $N=32$, which coincides with the expected behavior of a Spectral Fourier method.
+	\item After N=32, the errors are slowly increasing again to the order of $10^{-11}$ at $N=2048$.
+\end{itemize}
+This behavior suggests, that the function has a high-frequency components (factor of $10$) and at $N=32$, we achieve an optimal sampling that effectively captures these oscillations. The subsequent increase in error, is likely caused by accumulating round-off errors, rather than discretization errors. Furthermore it is important to not that the function is $2\pi$ periodic and builds a continuous wave using the periodic boundary conditions.
 \begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-$N$ & $L_\infty$ Error & $L_2$ Error & $L_\infty$ Ratio & $L_2$ Ratio \\
-\hline
-8 & $8.00 \times 10^{0}$ & $1.60 \times 10^{1}$ & --- & --- \\
-16 & $1.60 \times 10^{1}$ & $4.53 \times 10^{1}$ & 0.50 & 0.35 \\
-32 & $8.62 \times 10^{-14}$ & $1.36 \times 10^{-13}$ & $1.86 \times 10^{14}$ & $3.33 \times 10^{14}$ \\
-64 & $1.29 \times 10^{-13}$ & $3.23 \times 10^{-13}$ & 0.67 & 0.42 \\
-128 & $1.87 \times 10^{-13}$ & $6.76 \times 10^{-13}$ & 0.69 & 0.48 \\
-256 & $3.52 \times 10^{-13}$ & $1.67 \times 10^{-12}$ & 0.53 & 0.40 \\
-512 & $4.80 \times 10^{-12}$ & $9.44 \times 10^{-12}$ & 0.07 & 0.18 \\
-1024 & $3.80 \times 10^{-12}$ & $1.96 \times 10^{-11}$ & 1.26 & 0.48 \\
-2048 & $5.89 \times 10^{-11}$ & $9.69 \times 10^{-11}$ & 0.06 & 0.20 \\
-\hline
-\end{tabular}
-\caption{Convergence Analysis for $f(x) = \cos(10x)$ using Even Fourier Differentiation}
-\label{tab:cos10x}
+	\centering
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		$N$  & $L_\infty$ Error       & $L_2$ Error            & $L_\infty$ Ratio      & $L_2$ Ratio           \\
+		\hline
+		8    & $8.00 \times 10^{0}$   & $1.60 \times 10^{1}$   & ---                   & ---                   \\
+		16   & $1.60 \times 10^{1}$   & $4.53 \times 10^{1}$   & 0.50                  & 0.35                  \\
+		32   & $8.62 \times 10^{-14}$ & $1.36 \times 10^{-13}$ & $1.86 \times 10^{14}$ & $3.33 \times 10^{14}$ \\
+		64   & $1.29 \times 10^{-13}$ & $3.23 \times 10^{-13}$ & 0.67                  & 0.42                  \\
+		128  & $1.87 \times 10^{-13}$ & $6.76 \times 10^{-13}$ & 0.69                  & 0.48                  \\
+		256  & $3.52 \times 10^{-13}$ & $1.67 \times 10^{-12}$ & 0.53                  & 0.40                  \\
+		512  & $4.80 \times 10^{-12}$ & $9.44 \times 10^{-12}$ & 0.07                  & 0.18                  \\
+		1024 & $3.80 \times 10^{-12}$ & $1.96 \times 10^{-11}$ & 1.26                  & 0.48                  \\
+		2048 & $5.89 \times 10^{-11}$ & $9.69 \times 10^{-11}$ & 0.06                  & 0.20                  \\
+		\hline
+	\end{tabular}
+	\caption{Convergence Analysis for $f(x) = \cos(10x)$ using Even Fourier Differentiation}
+	\label{tab:cos10x}
 \end{table}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-$N$ & $L_\infty$ Error & $L_2$ Error & $L_\infty$ Ratio & $L_2$ Ratio \\
-\hline
-8 & $1.75 \times 10^{0}$ & $2.65 \times 10^{0}$ & --- & --- \\
-16 & $3.52 \times 10^{0}$ & $5.65 \times 10^{0}$ & 0.50 & 0.47 \\
-32 & $7.06 \times 10^{0}$ & $1.17 \times 10^{1}$ & 0.50 & 0.49 \\
-64 & $1.41 \times 10^{1}$ & $2.37 \times 10^{1}$ & 0.50 & 0.49 \\
-128 & $2.82 \times 10^{1}$ & $4.76 \times 10^{1}$ & 0.50 & 0.50 \\
-256 & $5.65 \times 10^{1}$ & $9.56 \times 10^{1}$ & 0.50 & 0.50 \\
-512 & $1.13 \times 10^{2}$ & $1.92 \times 10^{2}$ & 0.50 & 0.50 \\
-1024 & $2.26 \times 10^{2}$ & $3.83 \times 10^{2}$ & 0.50 & 0.50 \\
-2048 & $4.52 \times 10^{2}$ & $7.67 \times 10^{2}$ & 0.50 & 0.50 \\
-\hline
-\end{tabular}
-\caption{Convergence Analysis for $f(x) = \cos(x/2)$ using Even Fourier Differentiation}
-\label{tab:cosxhalf}
-\end{table}
+\subsection{Case 2}
+% Case 2: f(x) = cos(x/2)
+% For f(x) = cos(x/2), I observe:
+%
+% The errors consistently increase as N increases
+% The L∞ and L₂ ratios stabilize at exactly 0.50, indicating first-order convergence
+% Unlike Case 1, there is no spectral convergence observed
+%
+% This behavior is unexpected for a spectral method, which typically shows exponential convergence for smooth functions. The consistent error growth suggests the method is not suitable for this low-frequency function.
+% Importantly, for f(x) = cos(x/2), the function values at x=0 and x=2π are different (cos(0)=1 and cos(π)=0), creating a jump discontinuity when enforcing periodic boundary conditions. This mismatch at the boundaries introduces Gibbs phenomena and prevents spectral convergence, explaining the poor performance regardless of resolution.
+In this case of function $f(x)=\cos(x/2)$, we observe in Table~\ref{tab:cosxhalf} that
+\begin{itemize}
+	\item The errors consistently increases as $N$ increases.
+	\item The convergence rate for $L_\infty$ and $L_2$ is always around $0.5$.
+	\item No convergence like in Case 1 is observed.
+\end{itemize}
+This is an unexpected behavior for a spectral method for smooth functions. The constant error growth indicates the method is not suitable for this low-frequency function. Importantly the function values at $\cos(0) = 1$ and $\cos(\frac{2 \pi}{2}) = 0$ are different, creating a discontinuity when using periodic boundary conditions. This mismatch prevents the convergences and explains the poor performance.
 
 \begin{table}[H]
-\centering
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-$N$ & $L_\infty$ Error & $L_2$ Error & $L_\infty$ Ratio & $L_2$ Ratio \\
-\hline
-8 & $5.44 \times 10^{0}$ & $8.40 \times 10^{0}$ & --- & --- \\
-16 & $1.10 \times 10^{1}$ & $1.78 \times 10^{1}$ & 0.49 & 0.47 \\
-32 & $2.22 \times 10^{1}$ & $3.66 \times 10^{1}$ & 0.50 & 0.49 \\
-64 & $4.43 \times 10^{1}$ & $7.43 \times 10^{1}$ & 0.50 & 0.49 \\
-128 & $8.87 \times 10^{1}$ & $1.50 \times 10^{2}$ & 0.50 & 0.50 \\
-256 & $1.77 \times 10^{2}$ & $3.00 \times 10^{2}$ & 0.50 & 0.50 \\
-512 & $3.55 \times 10^{2}$ & $6.02 \times 10^{2}$ & 0.50 & 0.50 \\
-1024 & $7.10 \times 10^{2}$ & $1.20 \times 10^{3}$ & 0.50 & 0.50 \\
-2048 & $1.42 \times 10^{3}$ & $2.41 \times 10^{3}$ & 0.50 & 0.50 \\
-\hline
-\end{tabular}
-\caption{Convergence Analysis for $f(x) = x$ using Even Fourier Differentiation}
-\label{tab:linearx}
+	\centering
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		$N$  & $L_\infty$ Error     & $L_2$ Error          & $L_\infty$ Ratio & $L_2$ Ratio \\
+		\hline
+		8    & $1.75 \times 10^{0}$ & $2.65 \times 10^{0}$ & ---              & ---         \\
+		16   & $3.52 \times 10^{0}$ & $5.65 \times 10^{0}$ & 0.50             & 0.47        \\
+		32   & $7.06 \times 10^{0}$ & $1.17 \times 10^{1}$ & 0.50             & 0.49        \\
+		64   & $1.41 \times 10^{1}$ & $2.37 \times 10^{1}$ & 0.50             & 0.49        \\
+		128  & $2.82 \times 10^{1}$ & $4.76 \times 10^{1}$ & 0.50             & 0.50        \\
+		256  & $5.65 \times 10^{1}$ & $9.56 \times 10^{1}$ & 0.50             & 0.50        \\
+		512  & $1.13 \times 10^{2}$ & $1.92 \times 10^{2}$ & 0.50             & 0.50        \\
+		1024 & $2.26 \times 10^{2}$ & $3.83 \times 10^{2}$ & 0.50             & 0.50        \\
+		2048 & $4.52 \times 10^{2}$ & $7.67 \times 10^{2}$ & 0.50             & 0.50        \\
+		\hline
+	\end{tabular}
+	\caption{Convergence Analysis for $f(x) = \cos(x/2)$ using Even Fourier Differentiation}
+	\label{tab:cosxhalf}
 \end{table}
+
+\subsection{Case 3}
+% Case 3: f(x) = x
+% For f(x) = x, I observe:
+%
+% Similar to Case 2, errors consistently increase with N
+% The ratio also stabilizes at exactly 0.50
+% The errors are larger than in Case 2
+%
+% This linear function shows similar behavior to Case 2, with consistent error growth and fixed convergence ratios.
+% For this case, there's an even more severe boundary mismatch, as f(0)=0 and f(2π)=2π. This creates a significant jump at the boundary when imposing periodicity, leading to pronounced Gibbs phenomena. The function fundamentally contradicts the periodic assumption of Fourier methods, resulting in larger errors that grow with increasing resolution as the method attempts to resolve the discontinuity.
+In the final case for $f(x) = x$ we can observe
+\begin{itemize}
+	\item The ratio also stabilizes at around 0.50.
+	\item The errors is increasing and is even larger than in Case 2.
+\end{itemize}
+The linear function behaves similarly to Case 2 with fixed convergence ratios and consistently increasing errors. For this case there's even a more significant mismatch at the bondary ($0$ to $2\pi$). This function fundamentally contradicts the periodic assumption used by the Fourier methods, which results in large errors, which grow with increasing resolution.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		$N$  & $L_\infty$ Error     & $L_2$ Error          & $L_\infty$ Ratio & $L_2$ Ratio \\
+		\hline
+		8    & $5.44 \times 10^{0}$ & $8.40 \times 10^{0}$ & ---              & ---         \\
+		16   & $1.10 \times 10^{1}$ & $1.78 \times 10^{1}$ & 0.49             & 0.47        \\
+		32   & $2.22 \times 10^{1}$ & $3.66 \times 10^{1}$ & 0.50             & 0.49        \\
+		64   & $4.43 \times 10^{1}$ & $7.43 \times 10^{1}$ & 0.50             & 0.49        \\
+		128  & $8.87 \times 10^{1}$ & $1.50 \times 10^{2}$ & 0.50             & 0.50        \\
+		256  & $1.77 \times 10^{2}$ & $3.00 \times 10^{2}$ & 0.50             & 0.50        \\
+		512  & $3.55 \times 10^{2}$ & $6.02 \times 10^{2}$ & 0.50             & 0.50        \\
+		1024 & $7.10 \times 10^{2}$ & $1.20 \times 10^{3}$ & 0.50             & 0.50        \\
+		2048 & $1.42 \times 10^{3}$ & $2.41 \times 10^{3}$ & 0.50             & 0.50        \\
+		\hline
+	\end{tabular}
+	\caption{Convergence Analysis for $f(x) = x$ using Even Fourier Differentiation}
+	\label{tab:linearx}
+\end{table}
+\subsection{Comparison}
+% Explaining the Differences
+% The fundamental difference between these cases can be explained by:
+%
+% Function characteristics:
+%
+% Case 1 (cos(10x)): A high-frequency, periodic function that aligns well with the Fourier basis
+% Case 2 (cos(x/2)): A low-frequency function with period 4π, not matching the [0,2π] domain
+% Case 3 (x): A non-periodic function on [0,2π]
+%
+%
+% Spectral properties:
+%
+% Fourier methods typically excel for periodic functions
+% The Even Fourier method shows spectral convergence only for Case 1, where the function is periodic on the computational domain
+% For Cases 2 and 3, the non-periodic nature creates Gibbs phenomena at the boundaries
+%
+%
+% Convergence rates:
+%
+% Case 1: Spectral (exponential) convergence until machine precision, then dominated by round-of[48;61;153;2440;2754tf errors
+% Cases 2 and 3: First-order convergence with a constant ratio of 0.5, indicating the method is unable to accurately represent these functions regardless of resolution
+The fundamental difference between the cases can be explained by the following three key points:
+\begin{itemize}
+	\item \textbf{Function Characteristics}
+	      \begin{itemize}
+		      \item \textbf{Case 1}: A periodic, high-frequency function.
+		      \item \textbf{Case 2}: A low-frequency function with period $4\pi$, and not matching $[0, 2\pi]$
+		      \item \textbf{Case 3}: A non periodic function on $[0, 2 \pi]$
+	      \end{itemize}
+	\item \textbf{Spectral Properties}
+	      \begin{itemize}
+		      \item Fourier methods work very well for periodic functions
+		      \item Only for Case 1 the Fourier method converged.
+		      \item The other cases experience the Gibbs phenomena at the boundaries.
+	      \end{itemize}
+
+	\item \textbf{Covergence Rate}
+	      \begin{itemize}
+		      \item \textbf{Case 1}: Spectral convergence until machine precision, then experiencing round-of errors.
+		      \item \textbf{Case 2 \& 3}: First-order convergence with constant ratio $0.5$ and is unable to accurately represent the function even for higher $N$.
+	      \end{itemize}
+\end{itemize}
+This leads to the key insight that Even fourier distributions work best for functions that are periodic on the domain. For function that don't match this such as seen in Case 2 and 3, the method introduces errors that grow with the resolution.
+

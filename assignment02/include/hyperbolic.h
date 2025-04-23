@@ -41,18 +41,23 @@ public:
 
     // Set different dt based on the method type
     if (dynamic_cast<SecondOrderFiniteDiff<T> *>(differentiator_.get())) {
-      dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
+      // dt_ = T(0.5) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.001);
     } else if (dynamic_cast<FourthOrderFiniteDiff<T> *>(
                    differentiator_.get())) {
-      dt_ = T(0.25) * dx / (T(2) * MathConstants<T>::PI());
+      // dt_ = T(0.25) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.001);
     } else {
       // Fourier method - more restrictive for stability
-      dt_ = T(0.1) * dx / (T(2) * MathConstants<T>::PI());
+      // dt_ = T(0.01) * dx / (T(2) * MathConstants<T>::PI());
+      dt_ = T(0.001);
     }
 
     // Adjust dt to ensure we hit t_final exactly
-    num_steps_ = static_cast<int>(ceil(t_final / dt_));
-    dt_ = t_final / T(num_steps_);
+    // num_steps_ = static_cast<int>(ceil(t_final / dt_));
+    // dt_ = t_final / T(num_steps_);
+    num_steps_ = static_cast<int>(t_final / dt_);
+    t_final_ = dt_ * num_steps_;
 
     // Initialize solution vector with initial condition
     u_ = std::vector<T>(N + 1);
@@ -177,7 +182,7 @@ template <NumericType T> void convergence_study() {
   std::vector<double> times_fourth(N_values.size());
   std::vector<double> times_fourier(N_values.size());
 
-  std::cout << "Performing convergence study at t = π..." << std::endl;
+  std::cout << "Performing convergence study at t = pi..." << std::endl;
   std::cout << std::setw(8) << "N" << std::setw(20) << "Second Order"
             << std::setw(20) << "Fourth Order" << std::setw(20) << "Fourier"
             << std::endl;
@@ -215,10 +220,12 @@ template <NumericType T> void convergence_study() {
     HyperbolicSolver<T> solver_fourier(fourier);
     solver_fourier.initialize(N, t_final);
     solver_fourier.solve();
+		// std::cout << "\nFOURRIER" << std::endl;
     auto [_______, ________, _________, error_fourier, time_fourier] =
         solver_fourier.get_results();
     errors_fourier[i] = error_fourier;
     times_fourier[i] = time_fourier;
+		// std::cout << "\nFOURRIER END" << std::endl;
     std::cout << std::setw(20) << error_fourier << std::endl;
   }
 

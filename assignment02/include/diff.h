@@ -83,37 +83,6 @@ std::vector<T> Differentiator<T>::compute_F(std::vector<T> &u) {
   return F;
 }
 
-// template <NumericType T>
-// std::vector<T> Differentiator<T>::compute_F(const std::vector<T> &u) const {
-//   // Create a copy of the input since we can't modify analytical_u_ in a const
-//   // method
-//   std::vector<T> u_copy = u;
-//   std::vector<T> du(u.size());
-//
-//   // Manually compute the derivative based on the derivative type
-//   // This is a simplified version that might need to be specialized for
-//   // different derivative types
-//   T dx = T(2) * MathConstants<T>::PI() / (u.size());
-//
-//   size_t N = u.size() - 1;
-//   // Basic second-order finite difference (as a fallback)
-//   for (size_t j = 1; j < N; ++j) {
-//     du[j] = (u[j + 1] - u[j - 1]) / (T(2.0) * dx);
-//   }
-//
-//   // Periodic boundary conditions
-//   du[0] = (u[1] - u[N]) / (T(2.0) * dx);
-//   du[N] = (u[0] - u[N - 1]) / (T(2.0) * dx);
-//
-//   // Multiply by -2π to get F
-//   std::vector<T> F(u.size());
-//   for (size_t i = 0; i < u.size(); ++i) {
-//     F[i] = -T(2) * MathConstants<T>::PI() * du[i];
-//   }
-//
-//   return F;
-// }
-//
 template <NumericType T>
 const std::vector<T> &Differentiator<T>::get_x() const {
   return x_;

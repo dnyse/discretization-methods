@@ -260,7 +260,7 @@ template <NumericType T> void convergence_study() {
       } else {
         N_eq_fourth = N_values[i];
       }
-      std::cout << "  Fourth Order: N ≈ " << N_eq_fourth << std::endl;
+      std::cout << "  Fourth Order: N approx " << N_eq_fourth << std::endl;
       break;
     }
   }
@@ -278,7 +278,7 @@ template <NumericType T> void convergence_study() {
       } else {
         N_eq_fourier = N_values[i];
       }
-      std::cout << "  Fourier: N ≈ " << N_eq_fourier << std::endl;
+      std::cout << "  Fourier: N approx " << N_eq_fourier << std::endl;
       break;
     }
   }

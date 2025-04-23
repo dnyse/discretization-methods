@@ -1,7 +1,5 @@
-\section{ODD vs. EVEN Method}
-
-Based on the numerical evidence presented in Table~\ref{tab:fourier-comparison}, the EVEN Fourier differentiation method is generally more accurate and computationally efficient than the ODD method for approximating derivatives of the function $u(x) = \exp(k\sin(x))$. The EVEN method achieves smaller maximum relative errors in most cases while requiring fewer grid points, which translates to computational savings.
-The superior performance of the EVEN method is particularly pronounced for higher values of $k$ where the function oscillates more rapidly and presents a more challenging differentiation problem. This suggests that the EVEN method may be particularly advantageous for highly oscillatory functions.
+\section{Odd vs. Even Method}
+In this exercise, we compared the accuracy of two spectral differentiation methods, the Odd and Even Fourier methods. The function $u(x)= \exp(k \sin(x))$ and its derivative were used to compare the two techniques. The Table below summarizes the minimum number of grid points $N$ required to achieve the maximum error of $10^{-5}$ and the corresponding maximum relative errors for increasing values of the parameter $k$.
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|cc|cc|}
@@ -21,3 +19,5 @@ The superior performance of the EVEN method is particularly pronounced for highe
 	\caption{Comparison of ODD and EVEN Fourier Differentiation Methods for $u(x) = \exp(k\sin(x))$}
 	\label{tab:fourier-comparison}
 \end{table}
+The numerical evidence show that the Even method consistently outperforms the Odd method in terms of accuracy, by requiring less grid points to achieve a similar relative error. As an example for $k=4$ the Even method achieves a significant lower maximum relative error. Furthermore the Even method needs most of the time 2 to 4  less grid points to fall below the required error threshold.\\
+In conclusion, the EVEN Fourier method proves to be more reliable across and is preferable when high accuracy is required with fewer grid points.
