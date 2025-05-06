@@ -1,0 +1,162 @@
+\section{Fourier-Galerkin Approximation: Exercise 2}
+We are considering the variable coefficient problem
+\begin{equation}
+	\frac{\partial u}{\partial t}+\sin (x) \frac{\partial u}{\partial x}=0
+	\label{eq:pde2}
+\end{equation}
+with Dirichlet boundary conditions
+\begin{equation}
+	u(0,t) = u(\pi, t) = 0
+	\label{eq:bdc2}
+\end{equation}
+For our Basis function we choose the sine as our basis due to the it naturally satisfying the boundary condition
+\begin{equation}
+	\sin(nx) |_{x=0} = \sin(nx) |_{x=\pi} = 0
+	\label{eq:sin_bdc}
+\end{equation}
+therefore we define for the approximation
+\begin{equation}
+	u_N(x, t) = \sum_{n=1}^{N} \hat{u}_n(t) \sin(nx)
+	\label{eq:uN2}
+\end{equation}
+If we now follow the Galerking Approach first we substitute our approximation $u_N$ into the PDE:
+\begin{equation}
+	\frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x}=0
+	\label{eq:un_pde2}
+\end{equation}
+The residual is then given as
+\begin{equation}
+	R_N(x, t) = \frac{\partial u_N}{\partial t}+\sin (x) \frac{\partial u_N}{\partial x}
+\end{equation}
+Computing each term we get:
+\begin{itemize}
+	\item \textit{Time derivative}:
+	      \begin{equation}
+		      \frac{\partial u_N}{\partial t} = \sum_{n=1}^{N} \frac{d\hat{u}_n(t)}{dt} \sin(nx)
+		      \label{eq:tim_derv2}
+	      \end{equation}
+	\item \textit{Spatial derivative}:
+	      \begin{equation}
+		      \frac{\partial u_N}{\partial x} = \sum_{n=1}^{N} \hat{u}_n(t) n \cos(nx)
+		      \label{eq:spat_derv2}
+	      \end{equation}
+\end{itemize}
+Therefore the residual becomes
+\begin{equation}
+	R_N(x, t) =  \sum_{n=1}^{N} \frac{d\hat{u}_n(t)}{dt} \sin(nx) + \sin(x)  \sum_{n=1}^{N} \hat{u}_n(t) n \cos(nx)
+\end{equation}
+For the final step we want to make the residual orthogonal to the basis function. Hence for sine functions on the interval $[0,\pi]$ with weight function $w(x)=1$, we have:
+\begin{equation}
+	(\phi_n, \psi_m)_w = \int_0^{\pi} \sin(mx) \frac{2}{\pi}\sin(nx) dx = \delta_{mn}
+	\label{eq:weight_f}
+\end{equation}
+Therefore, $\gamma_m = \frac{\pi}{2}$ and our test functions should be:
+\begin{equation}
+	\psi_m = \frac{2}{\pi}\sin(mx)
+	\label{eq:test2}
+\end{equation}
+We require that the residual is orthogonal to these test functions:
+$(R_N, \psi_m)_w = 0 \quad \text{for all } m \in[1, N]$
+This gives us:
+\begin{equation}
+	\left(R_N, \psi_m\right)_w  = \frac{2}{\pi} \int_0^{\pi} \left ( \sum_{n=1}^{N} \frac{d\hat{u}_n(t)}{dt} \sin(nx) + \sin(x)  \sum_{n=1}^{N} \hat{u}_n(t) n \cos(nx) \right) \sin(mx) dx = 0
+	\label{eq:res_der}
+\end{equation}
+Looking at each term individually we get
+\begin{itemize}
+	\item \textit{First term} with applied orthogonality property:
+	      \begin{equation}
+		      \frac{2}{\pi}\int_0^{\pi} \sum_{n=1}^{N} \frac{d\hat{u}_n(t)}{dt} \sin(nx)\sin(mx) dx = \frac{2}{\pi} \cdot \frac{\pi}{2} \frac{d\hat{u}_m(t)}{dt} = \frac{d\hat{u}_m(t)}{dt}
+		      \label{eq:ft}
+	      \end{equation}
+
+	\item \textit{Second term}:
+	      \begin{equation}
+		      \frac{2}{\pi}\sum_{n=1}^{N} \hat{u}_n(t) n \int_0^{\pi} \sin(x)\cos(nx)\sin(mx) dx
+		      \label{eq:st}
+	      \end{equation}
+	      To evaluate the integral, we use the trigonometric identity:
+	      \begin{equation}
+		      \sin(a)\cos(b) = \frac{1}{2}[\sin(a+b) + \sin(a-b)]
+		      \label{eq:cossin_id}
+	      \end{equation}
+	      in our case this results in:
+	      \begin{equation}
+		      \begin{aligned}
+			      \sin(x)\cos(nx) & = \frac{1}{2}[\sin(x+nx) + \sin(x-nx)] = \frac{1}{2}[\sin((n+1)x) + \sin((1-n)x)] \\
+			                      & = \frac{1}{2}[\sin((n+1)x) - \sin((n-1)x)]
+			      \label{eq:cossin_ida}
+		      \end{aligned}
+	      \end{equation}
+	      since $\sin((1-n)x) = -\sin((n-1)x)$ for $n > 1$.
+	      We can now use another identity:
+	      \begin{equation}
+		      \sin(a)\sin(b) = \frac{1}{2}[\cos(a-b) - \cos(a+b)]
+		      \label{eq:sinsin_id}
+	      \end{equation}
+	      resulting in the following two integrals
+	      \begin{equation}
+		      \begin{aligned}
+			      \int_0^{\pi} \sin((n+1)x)\sin(mx) dx & = \frac{1}{2}\int_0^{\pi} [\cos((n+1-m)x) - \cos((n+1+m)x)] dx \\
+			      \int_0^{\pi} \sin((n-1)x)\sin(mx) dx & = \frac{1}{2}\int_0^{\pi} [\cos((n-1-m)x) - \cos((n-1+m)x)] dx
+		      \end{aligned}
+		      \label{eq:sinsin_ida}
+	      \end{equation}
+	      Evaluating these cosine intergrals we note that
+	      \begin{equation}
+		      \int_0^{\pi} \cos(kx) dx = \begin{cases}
+			      \pi                      & \text{if } k = 0    \\
+			      \frac{\sin(k\pi)}{k} = 0 & \text{if } k \neq 0
+		      \end{cases}
+		      \label{eq:casecos}
+	      \end{equation}
+	      This means that the integrals are non-zero only when:
+	      \begin{equation}
+		      \begin{aligned}
+			      n+1-m & = 0 \Rightarrow n = m-1                        \\
+			      n+1+m & = 0 \text{ (not possible for positive $n, m$)} \\
+			      n-1-m & = 0 \Rightarrow n = m+1                        \\
+			      n-1+m & = 0 \text{ (not possible for positive $n, m$)} \\
+		      \end{aligned}
+		      \label{eq:coszero}
+	      \end{equation}
+	      Evaluating these conditions by using the identities introduces before:
+	      \begin{itemize}
+		      \item When $n = m-1$:
+		            \begin{equation}
+			            \begin{aligned}
+				            \frac{2}{\pi} \hat{u}_{m-1}(t) \int_0^\pi \sin(x) \cos((m-1)x) \sin(mx) dx & = 	\frac{2}{\pi} \hat{u}_{m-1}(t) \int_0^\pi \sin(x) \cos((m-1)x) \sin(mx) dx                       \\
+				                                                                                       & = 	\frac{2}{\pi} \hat{u}_{m-1}(t) \frac{1}{2}\int_0^\pi \sin(mx)^2 - (\cos (2x) - cos((2m -2)x)) dx \\
+				            % TODO: Improve if time allows
+				                                                                                       & = 	\frac{2}{\pi} \hat{u}_{m-1}(t) \frac{1}{2} \left ( \frac{\pi}{2} - 0 \right)                     \\
+				                                                                                       & = \frac{1}{2} (m - 1) \hat{u}_{m-1}(t)
+				            \label{eq:nm-1}
+			            \end{aligned}
+		            \end{equation}
+		            Note that far any non-zero integer k, $\int_0^\pi\cos(kx) dx = 0 $. Since $2$ and $2m - 2$ are non zero integers for $m > 1$ therefore the term which includes the two cosine term evaluates to zero.
+		      \item When $n = m+1$:
+		            \begin{equation}
+			            \begin{aligned}
+				            \frac{2}{\pi} \hat{u}_{m+1}(t) \int_0^\pi \sin(x) \cos((m+1)x) \sin(mx) dx & = 	\frac{2}{\pi} \hat{u}_{m+1}(t) \int_0^\pi \sin(x) \cos((m+1)x) \sin(mx) dx                         \\
+				                                                                                       & = 	\frac{2}{\pi} \hat{u}_{m+1}(t) \frac{1}{2}\int_0^\pi (\cos (2x) - \cos((2m + 2)x)) - \sin(mx)^2 dx \\
+				            % TODO: Improve if time allows and explain why term is zero
+				                                                                                       & = 	\frac{2}{\pi} \hat{u}_{m+1}(t) \frac{1}{2} \left ( 0 -\frac{\pi}{2} \right)                        \\
+				                                                                                       & = \frac{1}{2} (m + 1) \hat{u}_{m+1}(t)
+				            \label{eq:nm-1}
+			            \end{aligned}
+		            \end{equation}
+
+		            Note that the same argument can be made for this term Since $2$ and $2m + 2$ are non zero integers therefore the term which includes the two cosine term evaluates to zero.
+	      \end{itemize}
+\end{itemize}
+If we now combine both terms we end up with following ODE system
+\begin{equation}
+	\frac{d \hat{u}_m(t)}{dt} = \frac{1}{2} [(m+1)\hat{u}_{m+1}(t) - (m-1)\hat{u}_{m-1}(t)]
+	\label{eq:final_ode}
+\end{equation}
+For the initial condition, we project the initial function $g(x)$ onto our basis:
+\begin{equation}
+	\hat{u}_m(0) = \frac{2}{\pi}\int_0^{\pi} g(x)\sin(mx) dx
+	\label{eq:init2}
+\end{equation}
+This completes the Fourier-Galerkin approximation for the given variable coefficient problem with Dirichlet boundary conditions.
