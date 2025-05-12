@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
+add_compile_definitions(_Alignof=__alignof)
+
 # Set different flags for different build types
 # if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 #     message(STATUS "Configuring Debug build")

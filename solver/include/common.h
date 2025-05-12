@@ -21,58 +21,6 @@ template <NumericType T> using HyperbolicFunction = T (*)(T, T);
 // Enum stays the same
 enum MethodType { EVEN, ODD };
 
-// Template for test functions
-namespace TestFunctions {
-template <NumericType T> T func_ex01_u(T x, int k) {
-  return exp(T(k) * sin(x));
-}
-
-template <NumericType T> T func_ex02_1_u(T x, int k = 0) {
-  return cos(T(10) * x);
-}
-
-template <NumericType T> T func_ex02_2_u(T x, int k = 0) {
-  return cos(x / T(2));
-}
-
-template <NumericType T> T func_ex02_3_u(T x, int k = 0) { return x; }
-
-template <NumericType T> T func_ex01_du(T x, int k) {
-  return T(k) * cos(x) * exp(T(k) * sin(x));
-}
-
-template <NumericType T> T func_ex02_1_du(T x, int k = 0) {
-  return -T(10) * sin(T(10) * x);
-}
-
-template <NumericType T> T func_ex02_2_du(T x, int k = 0) {
-  return -T(0.5) * sin(x / T(2));
-}
-
-template <NumericType T> T func_ex02_3_du(T x, int k = 0) { return T(1); }
-
-template <NumericType T> T hyperbolic_exact_u(T x, T t) {
-  return exp(sin(x - T(2) * MathConstants<T>::PI() * t));
-}
-
-// Initial condition u(x,0) = exp(sin(x))
-template <NumericType T> T hyperbolic_initial_u(T x, int k = 0) {
-  return exp(sin(x));
-}
-
-// Analytical derivative du/dx = cos(x-2πt) * exp(sin(x-2πt))
-template <NumericType T> T hyperbolic_analytical_du(T x, T t) {
-  T arg = x - T(2) * MathConstants<T>::PI() * t;
-  return cos(arg) * exp(sin(arg));
-}
-
-// Wrapper for analytical derivative at t=0 (for Differentiator interface)
-template <NumericType T> T hyperbolic_du_t0(T x, int k = 0) {
-  return hyperbolic_analytical_du(x, T(0));
-}
-
-} // namespace TestFunctions
-
 namespace BurgersExact {
 
 template <NumericType T> T phi(T a, T b, T nu, int num_terms = 20) {
@@ -149,16 +97,73 @@ T exact_derivative(T x, T t, T c = T(4), T nu = T(0.1)) {
 
   return -T(2) * nu * numerator / denominator;
 }
+} // namespace BurgersExact
+  //
 
-// Wrapper functions for Differentiator interface
+// Template for test functions
+namespace TestFunctions {
+template <NumericType T> T func_ex01_u(T x, int k) {
+  return exp(T(k) * sin(x));
+}
+
+template <NumericType T> T func_ex02_1_u(T x, int k = 0) {
+  return cos(T(10) * x);
+}
+
+template <NumericType T> T func_ex02_2_u(T x, int k = 0) {
+  return cos(x / T(2));
+}
+
+template <NumericType T> T func_ex02_3_u(T x, int k = 0) { return x; }
+
+template <NumericType T> T func_ex01_du(T x, int k) {
+  return T(k) * cos(x) * exp(T(k) * sin(x));
+}
+
+template <NumericType T> T func_ex02_1_du(T x, int k = 0) {
+  return -T(10) * sin(T(10) * x);
+}
+
+template <NumericType T> T func_ex02_2_du(T x, int k = 0) {
+  return -T(0.5) * sin(x / T(2));
+}
+
+template <NumericType T> T func_ex02_3_du(T x, int k = 0) { return T(1); }
+
+template <NumericType T> T hyperbolic_exact_u(T x, T t) {
+  return exp(sin(x - T(2) * MathConstants<T>::PI() * t));
+}
+
+// Initial condition u(x,0) = exp(sin(x))
+template <NumericType T> T hyperbolic_initial_u(T x, int k = 0) {
+  return exp(sin(x));
+}
+
+// Analytical derivative du/dx = cos(x-2πt) * exp(sin(x-2πt))
+template <NumericType T> T hyperbolic_analytical_du(T x, T t) {
+  T arg = x - T(2) * MathConstants<T>::PI() * t;
+  return cos(arg) * exp(sin(arg));
+}
+
+// Wrapper for analytical derivative at t=0 (for Differentiator interface)
+template <NumericType T> T hyperbolic_du_t0(T x, int k = 0) {
+  return hyperbolic_analytical_du(x, T(0));
+}
+
+// For Burgers' equation
 template <NumericType T> T burgers_initial_u(T x, int k = 0) {
-  return initial_condition<T>(x);
+  return BurgersExact::initial_condition<T>(x);
+}
+
+template <NumericType T>
+T burgers_exact_u(T x, T t, T c = T(4), T nu = T(0.1)) {
+  return BurgersExact::exact_solution<T>(x, t, c, nu);
 }
 
 template <NumericType T> T burgers_initial_du(T x, int k = 0) {
-  return exact_derivative<T>(x, T(0));
+  return BurgersExact::exact_derivative<T>(x, T(0));
 }
 
-} // namespace BurgersExact
+} // namespace TestFunctions
 
 #endif // INCLUDE_INCLUDE_COMMON_H_

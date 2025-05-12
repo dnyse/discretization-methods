@@ -50,7 +50,7 @@ public:
     // Initialize solution vector with initial condition
     u_ = std::vector<T>(N + 1);
     for (int i = 0; i <= N; i++) {
-      u_[i] = burgers_initial_u<T>(differentiator_->get_x()[i]);
+      u_[i] = TestFunctions::burgers_initial_u<T>(differentiator_->get_x()[i]);
     }
   }
 
@@ -75,7 +75,7 @@ public:
     u_exact_ = std::vector<T>(N_ + 1);
     for (int i = 0; i <= N_; i++) {
       u_exact_[i] =
-          burgers_exact_u<T>(differentiator_->get_x()[i], t_final_, T(4), nu_);
+          TestFunctions::burgers_exact_u<T>(differentiator_->get_x()[i], t_final_, T(4), nu_);
     }
   }
 
