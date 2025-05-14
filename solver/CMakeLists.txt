@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
 add_compile_definitions(_Alignof=__alignof)
 
 # Set different flags for different build types
@@ -50,9 +49,14 @@ add_compile_definitions(HAVE_BOOST)
 find_package(OpenMP REQUIRED)
 if(OpenMP_CXX_FOUND)
     message(STATUS "OpenMP found. Adding compiler flags: ${OpenMP_CXX_FLAGS}")
+    # Add OpenMP include directories explicitly
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+    # Set compile flags
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    # Print OpenMP information for debugging
+    message(STATUS "OpenMP include dirs: ${OpenMP_CXX_INCLUDE_DIRS}")
+    message(STATUS "OpenMP libraries: ${OpenMP_CXX_LIBRARIES}")
 endif()
-
 
 FetchContent_Declare(matplotplusplus
         GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
@@ -71,13 +75,20 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 file(GLOB_RECURSE SOURCES ${CMAKE_SOURCE_DIR}/src/*.cc)
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/include/*.h)
 
-# Create executable or library
+# Create executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-# Link OpenMP
+# Link OpenMP with target_link_libraries
 target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 
-
-# Link Matplot++ (Even though it's header-only, this ensures compatibility)
+# Link Matplot++
 target_link_libraries(${PROJECT_NAME} PUBLIC matplot)
 
+# Add OpenMP include directories to the target specifically
+# This ensures they appear in compile_commands.json
+target_include_directories(${PROJECT_NAME} PUBLIC ${OpenMP_CXX_INCLUDE_DIRS})
+
+# Alternative: Set properties directly on the target
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    COMPILE_FLAGS "${OpenMP_CXX_FLAGS}"
+)
