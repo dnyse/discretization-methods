@@ -3,7 +3,6 @@
 
 #include "common.h"
 #include "diff.h"
-#include "finite_diff.h"
 #include "fourier.h"
 #include "integrate.h"
 #include <chrono>
@@ -17,41 +16,38 @@ public:
       : differentiator_(differentiator), nu_(nu),
         integrator_(std::make_shared<RungeKutta4<T>>()) {}
 
-  void initialize(int N, T t_final) {
+  void initialize(int N, T t_final, T cfl) {
     N_ = N;
     t_final_ = t_final;
 
-    // Create grid points
+    // Create grid points (ODD method as specified)
     differentiator_->create_grid_pts(N);
-
-    // Calculate time step (CFL condition for Burgers' equation)
-    T dx = T(2) * MathConstants<T>::PI() / (N + 1);
-    T c_max = T(4); // Maximum expected velocity
-
-    // CFL condition: dt <= min(dx/c_max, dx²/(2ν))
-    T dt_adv = T(0.1) * dx / c_max;
-    T dt_diff = T(0.1) * dx * dx / (T(2) * nu_);
-    dt_ = std::min(dt_adv, dt_diff);
-
-    // Additional safety for different schemes
-    if (dynamic_cast<SecondOrderFiniteDiff<T> *>(differentiator_.get())) {
-      dt_ *= T(0.5);
-    } else if (dynamic_cast<FourthOrderFiniteDiff<T> *>(
-                   differentiator_.get())) {
-      dt_ *= T(0.25);
-    } else if (dynamic_cast<SpectralFourier<T> *>(differentiator_.get())) {
-      dt_ *= T(0.1); // Be more conservative with spectral method
-    }
-
-    // Adjust dt to ensure we hit t_final exactly
-    num_steps_ = static_cast<int>(ceil(t_final / dt_));
-    dt_ = t_final / T(num_steps_);
 
     // Initialize solution vector with initial condition
     u_ = std::vector<T>(N + 1);
     for (int i = 0; i <= N; i++) {
       u_[i] = TestFunctions::burgers_initial_u<T>(differentiator_->get_x()[i]);
     }
+
+    // Calculate Δx for ODD method
+    T dx = T(2) * MathConstants<T>::PI() / T(N + 1);
+
+    // Find max|u(xⱼ)| from current solution
+    T max_u = T(0);
+    for (int j = 0; j <= N; j++) {
+      T abs_u = abs(u_[j]);
+      if (abs_u > max_u) {
+        max_u = abs_u;
+      }
+    }
+
+    T dt_constraint = max_u / dx + nu_ / (dx * dx);
+
+    dt_ = cfl / dt_constraint;
+
+    // Adjust dt to ensure we hit t_final exactly
+    num_steps_ = static_cast<int>(ceil(t_final / dt_));
+    dt_ = t_final / T(num_steps_);
   }
 
   void solve() {
@@ -95,6 +91,95 @@ public:
     return {differentiator_->get_x(), u_, u_exact_, compute_error(),
             computation_time_};
   }
+  T find_max_cfl(int N) {
+    N_ = N;
+    differentiator_->create_grid_pts(N);
+
+    // Initialize solution
+    u_ = std::vector<T>(N + 1);
+    for (int i = 0; i <= N; i++) {
+      u_[i] = TestFunctions::burgers_initial_u<T>(differentiator_->get_x()[i]);
+    }
+
+    // Calculate Δx
+    T dx = T(2) * MathConstants<T>::PI() / T(N + 1);
+
+    // Find max|u(xⱼ)|
+    T max_u = T(0);
+    for (int j = 0; j <= N; j++) {
+      T abs_u = abs(u_[j]);
+      if (abs_u > max_u) {
+        max_u = abs_u;
+      }
+    }
+
+    // Calculate the constraint denominator
+    T dt_constraint = max_u / dx + nu_ / (dx * dx);
+
+    // Binary search for maximum stable CFL
+    T cfl_low = T(0.01);
+    T cfl_high = T(2.0);
+    T cfl_tolerance = T(0.01);
+
+    while (cfl_high - cfl_low > cfl_tolerance) {
+      T cfl_test = (cfl_low + cfl_high) / T(2);
+
+      // Apply formula (3) with this CFL
+      dt_ = cfl_test / dt_constraint;
+
+      // Test stability with a short run
+      if (is_stable_with_cfl(cfl_test)) {
+        cfl_low = cfl_test;
+      } else {
+        cfl_high = cfl_test;
+      }
+    }
+
+    return cfl_low; // Return maximum stable CFL
+  }
+
+  bool is_stable_with_cfl(T cfl) {
+    // Calculate Δx
+    T dx = T(2) * MathConstants<T>::PI() / T(N_ + 1);
+
+    // Reset solution to initial condition
+    std::vector<T> u_test(N_ + 1);
+    for (int i = 0; i <= N_; i++) {
+      u_test[i] =
+          TestFunctions::burgers_initial_u<T>(differentiator_->get_x()[i]);
+    }
+
+    // Test for a short time (e.g., 10 time steps)
+    int test_steps = 10;
+
+    for (int step = 0; step < test_steps; ++step) {
+      // Recalculate max|u| for current solution
+      T max_u = T(0);
+      for (int j = 0; j <= N_; j++) {
+        T abs_u = abs(u_test[j]);
+        if (abs_u > max_u) {
+          max_u = abs_u;
+        }
+      }
+
+      // Apply formula (3)
+      T dt_constraint = max_u / dx + nu_ / (dx * dx);
+      T dt = cfl / dt_constraint;
+
+      // Take one time step
+      u_test =
+          integrator_->integrate_burgers(u_test, dt, *differentiator_, nu_);
+
+      // Check for instability (NaN or exponential growth)
+      for (const auto &val : u_test) {
+        if (std::isnan(val) || std::isinf(val) || abs(val) > T(1e10)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
 
 private:
   std::shared_ptr<Differentiator<T>> differentiator_;
@@ -114,37 +199,6 @@ public:
   BurgersGalerkinSolver(std::shared_ptr<FourierGalerkin<T>> galerkin,
                         T nu = T(0.1))
       : galerkin_(galerkin), nu_(nu) {}
-
-  void initialize(int N, T t_final) {
-    N_ = N;
-    t_final_ = t_final;
-
-    // Create grid points
-    galerkin_->create_grid_pts(N);
-
-    // Calculate CFL for time step
-    T dx = T(2) * MathConstants<T>::PI() / (N + 1);
-    T k_max = T(N) / T(2);
-
-    // Time step based on exam formula (Eq. 4)
-    // dt ≤ CFL × [max|u(x_j)|*k_max + ν*(k_max)²]^(-1)
-    T u_max = T(4); // Estimated maximum velocity for Burgers' sawtooth
-    T dt_constraint = u_max * k_max + nu_ * k_max * k_max;
-
-    // We'll determine CFL experimentally, but start conservative
-    cfl_ = T(0.5);
-    dt_ = cfl_ / dt_constraint;
-
-    // Adjust dt to ensure we hit t_final exactly
-    num_steps_ = static_cast<int>(ceil(t_final / dt_));
-    dt_ = t_final / T(num_steps_);
-
-    // Initialize solution vector with initial condition
-    u_ = std::vector<T>(N + 1);
-    for (int i = 0; i <= N; i++) {
-      u_[i] = TestFunctions::burgers_initial_u<T>(galerkin_->get_x()[i]);
-    }
-  }
 
   void solve() {
     auto start_time = std::chrono::high_resolution_clock::now();

@@ -29,64 +29,44 @@ void print_usage(const char *prog_name) {
   std::cout << std::endl;
 }
 
-// Exercise 3 Part 2(b): Burgers convergence study (Collocation)
-void burgers_convergence_study() {
-  std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
-  double t_final = MathConstants<double>::PI() / 4.0; // t = π/4
-  double nu = 0.1;
-  double c = 4.0;
-
-  std::vector<double> errors(N_values.size());
-  std::vector<double> times(N_values.size());
-
-  std::cout
-      << "\nBurgers' Equation Convergence Study (Fourier Spectral Method - ODD)"
-      << std::endl;
-  std::cout << "Parameters: ν = " << nu << ", c = " << c << ", t_final = π/4"
-            << std::endl;
-  std::cout << std::setw(8) << "N" << std::setw(20) << "L_inf Error"
-            << std::setw(20) << "Computation Time" << std::endl;
-  std::cout << std::string(48, '-') << std::endl;
-
-  for (size_t i = 0; i < N_values.size(); ++i) {
-    int N = N_values[i];
-    std::cout << std::setw(8) << N;
-
-    // Create Fourier spectral solver with ODD method
-    auto spectral = std::make_shared<SpectralFourier<double>>(MethodType::ODD);
-    spectral->build(N);
-
-    // Initialize and solve
-    BurgersSolver<double> solver(spectral, nu);
-    solver.initialize(N, t_final);
-    solver.solve();
-
-    // Get results
-    auto [x, u_numerical, u_exact, error, time] = solver.get_results();
-    errors[i] = error;
-    times[i] = time;
-
-    std::cout << std::scientific << std::setprecision(6) << std::setw(20)
-              << error << std::fixed << std::setprecision(4) << std::setw(20)
-              << time << "s" << std::endl;
-  }
-
-  // Calculate convergence rates
-  std::cout << "\nConvergence Rates:" << std::endl;
-  std::cout << std::setw(8) << "N" << std::setw(20) << "Convergence Rate"
-            << std::endl;
-  std::cout << std::string(28, '-') << std::endl;
-
-  for (size_t i = 1; i < N_values.size(); ++i) {
-    double ratio = double(N_values[i]) / double(N_values[i - 1]);
-    double rate = log(errors[i - 1] / errors[i]) / log(ratio);
-
-    std::cout << std::setw(8) << N_values[i] << std::fixed
-              << std::setprecision(2) << std::setw(20) << rate << std::endl;
-  }
+// Part 2(b): Burgers convergence study (Collocation)
+void burgers_find_max_cfl() {
+    std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
+    double nu = 0.1;
+    
+    std::cout << "\nPart 2(b): Finding Maximum CFL Values" << std::endl;
+    std::cout << "Parameters: ν = " << nu << std::endl;
+    std::cout << std::setw(8) << "N" << std::setw(20) << "Max CFL" << std::endl;
+    std::cout << std::string(28, '-') << std::endl;
+    
+    std::vector<double> max_cfls;
+    
+    for (int N : N_values) {
+        auto spectral = std::make_shared<SpectralFourier<double>>(MethodType::ODD);
+        spectral->build(N);
+        
+        BurgersSolver<double> solver(spectral, nu);
+        double max_cfl = solver.find_max_cfl(N);
+        max_cfls.push_back(max_cfl);
+        
+        std::cout << std::setw(8) << N << std::fixed << std::setprecision(3)
+                  << std::setw(20) << max_cfl << std::endl;
+    }
+    
+    // Analyze if CFL definition is reasonable
+    std::cout << "\nAnalysis: Does the CFL definition seem reasonable?" << std::endl;
+    std::cout << "The CFL values should typically decrease as N increases for spectral methods." << std::endl;
+    std::cout << "Observed trend: ";
+    for (size_t i = 1; i < max_cfls.size(); ++i) {
+        if (max_cfls[i] < max_cfls[i-1]) {
+            std::cout << "↓ ";
+        } else {
+            std::cout << "↑ ";
+        }
+    }
+    std::cout << std::endl;
 }
-
-// Exercise 3 Part 2(d): Burgers time evolution (Collocation)
+// Part 2(d): Burgers time evolution (Collocation)
 void burgers_time_evolution() {
   int N = 128; // As specified in the exam
   std::vector<double> times = {
@@ -125,7 +105,7 @@ void burgers_time_evolution() {
   }
 }
 
-// Exercise 3 Part 3(b): CFL determination (Galerkin)
+// Part 3(b): CFL determination (Galerkin)
 void determine_cfl_values() {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
   double nu = 0.1;
@@ -152,7 +132,7 @@ void determine_cfl_values() {
   }
 }
 
-// Exercise 3 Part 3(c): Convergence study (Galerkin)
+//  Part 3(c): Convergence study (Galerkin)
 void galerkin_convergence_study() {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
   double t_final = MathConstants<double>::PI() / 4.0;
@@ -200,7 +180,7 @@ void galerkin_convergence_study() {
   }
 }
 
-// Exercise 3 Part 3(d): Comparison and plots (Galerkin)
+// Part 3(d): Comparison and plots (Galerkin)
 void compare_with_collocation() {
   std::vector<int> N_values = {64, 128};
   double t_final = MathConstants<double>::PI() / 4.0;
