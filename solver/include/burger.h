@@ -29,6 +29,23 @@ public:
     for (int i = 0; i <= N; i++) {
       u_[i] = TestFunctions::burgers_initial_u<T>(differentiator_->get_x()[i]);
     }
+    // Calculate initial time step based on CFL condition
+    T dx = T(2) * MathConstants<T>::PI() / T(N_ + 1);
+    T dt_constraint_sec = nu_ / (dx * dx);
+
+    T max_curr = T(0);
+    for (int j = 0; j <= N_; j++) {
+      T max_pot = abs(u_[j]) / dx + dt_constraint_sec;
+      if (max_pot > max_curr) {
+        max_curr = max_pot;
+      }
+    }
+
+    T dt_initial = cfl_ / max_curr;
+
+    // Calculate number of time steps and adjust dt to hit t_final exactly
+    num_steps_ = static_cast<int>(ceil(t_final / dt_initial));
+    dt_ = t_final / T(num_steps_);
   }
 
   void solve() {
@@ -37,10 +54,10 @@ public:
     T t = T(0);
     T dx = T(2) * MathConstants<T>::PI() / T(N_ + 1);
     T dt_constraint_sec = nu_ / (dx * dx);
-    for (int step = 0; step < num_steps_; ++step) {
-      // Use the specialized Burgers' equation integrator
-      T max_curr = T(0);
 
+    // Use time-stepping with a fixed final time t_final_
+    while (t < t_final_) {
+      T max_curr = T(0);
       for (int j = 0; j <= N_; j++) {
         T max_pot = abs(u_[j]) / dx + dt_constraint_sec;
         if (max_pot > max_curr) {
@@ -50,11 +67,13 @@ public:
 
       T dt = cfl_ / max_curr;
 
-      u_ = integrator_->integrate_burgers(u_, dt, *differentiator_, nu_);
-      t += dt_;
+      if (t + dt > t_final_) {
+        dt = t_final_ - t;
+      }
 
-      // Apply periodic boundary conditions
-      u_[0] = u_[N_];
+      u_ = integrator_->integrate_burgers(u_, dt, *differentiator_, nu_);
+
+      t += dt;
     }
 
     auto end_time = std::chrono::high_resolution_clock::now();
