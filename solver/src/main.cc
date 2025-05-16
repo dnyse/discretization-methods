@@ -4,6 +4,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <iomanip>
 #include <iostream>
+#include <matplot/matplot.h> // For plotting
 #include <omp.h>
 #include <string>
 #include <vector>
@@ -107,6 +108,37 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
 
     auto [x, u_numerical, u_exact, error, time] = solver.get_results();
     errors.push_back(error);
+
+    using namespace matplot;
+
+    auto fig = figure(true);
+    fig->quiet_mode(true);
+    fig->backend()->run_command("unset warnings");
+    fig->size(1280, 960);
+    fig->font_size(18);
+
+    auto p2 = plot(x, u_numerical, "b-o");
+    p2->line_width(3);
+    p2->display_name("Numerical Solution");
+
+    hold(true);
+
+    auto p1 = plot(x, u_exact, "r");
+    p1->line_width(3);
+    p1->display_name("Analytical Solution");
+
+    hold(false);
+
+    auto ax = gca();
+    ax->font_size(18); // Apply font size to axis-level elements
+    ax->xlabel("x");
+    ax->ylabel("u(x,t)");
+    ax->title("Solution for Burgers Problem at tfinal with N=" +
+              std::to_string(N_values[i]));
+
+    legend()->font_size(16);
+
+    save("burger_tfinal_" + std::to_string(N_values[i]) + ".png");
 
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(15) << cfl << std::scientific << std::setprecision(6)
