@@ -18,12 +18,11 @@ template <NumericType T> struct MathConstants {
 template <NumericType T> using AnalyticalFunction = T (*)(T, int);
 template <NumericType T> using HyperbolicFunction = T (*)(T, T);
 
-// Enum stays the same
 enum MethodType { EVEN, ODD };
 
 namespace BurgersExact {
 
-template <NumericType T> T phi(T a, T b, T nu, int num_terms = 20) {
+template <NumericType T> T phi(T a, T b, T nu, int num_terms = 100) {
   T result = T(0);
   for (int k = -num_terms; k <= num_terms; ++k) {
     T arg = (a - T(2 * k + 1) * MathConstants<T>::PI());
@@ -33,16 +32,15 @@ template <NumericType T> T phi(T a, T b, T nu, int num_terms = 20) {
   return result;
 }
 
-template <NumericType T> T dphi_dx(T a, T b, T nu, int num_terms = 20) {
+template <NumericType T> T dphi_dx(T a, T b, T nu, int num_terms = 100) {
   T result = T(0);
   for (int k = -num_terms; k <= num_terms; ++k) {
-    T pi_term = T(2 * k + 1) * MathConstants<T>::PI();
-    T arg = (a - pi_term) * (a - pi_term) / (T(4) * nu * b);
-    // derivative of exp(-arg) with respect to x (through a = x - ct)
-    // d/dx[exp(-arg)] = exp(-arg) * (-1) * 2*(a-pi_term)/(4*nu*b) * da/dx
-    // da/dx = 1
-    T coeff = -(a - pi_term) / (T(2) * nu * b);
-    result += coeff * exp(-arg);
+    T arg_exp = (a - T(2 * k + 1) * MathConstants<T>::PI());
+    arg_exp = arg_exp * arg_exp / (T(4) * nu * b);
+
+    T coeff =
+        -(a + MathConstants<double>::PI() * (-2 * k - 1)) / (T(2) * nu * b);
+    result += coeff * exp(-arg_exp);
   }
   return result;
 }
@@ -63,7 +61,7 @@ template <NumericType T> T initial_condition(T x, int k = 0) {
 // For the exact derivative with respect to x, we need to be careful with chain
 // rule
 template <NumericType T>
-T exact_derivative(T x, T t, T c = T(4), T nu = T(0.1)) {
+T exact_derivative(T x, T t, T c = T(4), T nu = T(0.1), int num_terms = 100 ) {
   T a = x - c * t;
   T b = t + T(1);
 
@@ -76,7 +74,7 @@ T exact_derivative(T x, T t, T c = T(4), T nu = T(0.1)) {
 
   // Second derivative of phi with respect to x
   T d2phi_dx2 = T(0);
-  for (int k = -20; k <= 20; ++k) {
+  for (int k = -num_terms; k <= num_terms; ++k) {
     T pi_term = T(2 * k + 1) * MathConstants<T>::PI();
     T arg = (a - pi_term) * (a - pi_term) / (T(4) * nu * b);
 

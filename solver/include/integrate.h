@@ -89,10 +89,8 @@ RungeKutta4<T>::integrate_burgers(const std::vector<T> &u, T dt,
   }
 
   // k4 = f(u + dt * k3)
-  std::vector<T> k4 = differentiator.compute_burgers_rhs(u3, nu);
-
-
   // un+1 = u + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+  std::vector<T> k4 = differentiator.compute_burgers_rhs(u3, nu);
   for (size_t i = 0; i <= N; ++i) {
   un_p1[i] = (T(1) / T(3)) *
                (-u[i] + u1[i] + T(2) * u2[i] + u3[i] + dt / T(2) * k4[i]);
