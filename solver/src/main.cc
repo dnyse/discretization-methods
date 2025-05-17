@@ -39,20 +39,62 @@ std::vector<double> burgers_find_max_cfl() {
 
   std::cout << "\n=== Part 2(b): Determining Maximum CFL Values ==="
             << std::endl;
-  std::cout << std::setw(8) << "N" << std::setw(20) << "Max CFL" << std::endl;
-  std::cout << std::string(28, '-') << std::endl;
+  std::cout << std::setw(8) << "N" << std::setw(20) << "Max CFL"
+            << std::setw(25) << "Error at Max CFL" << std::endl;
+  std::cout << std::string(53, '-') << std::endl;
+
+  double t_test = MathConstants<double>::PI() / 8.0;
 
   for (int N : N_values) {
     auto spectral = std::make_shared<SpectralFourier<double>>(MethodType::ODD);
     spectral->build(N);
 
     BurgersSolver<double> solver(spectral, nu);
-    double max_cfl = solver.find_max_cfl(N);
-    max_cfls.push_back(max_cfl);
+
+    // Binary search for maximum stable and accurate CFL
+    double cfl_low = 0.01;
+    double cfl_high = 0.75; // More conservative upper bound
+    double cfl_tolerance = 0.01;
+    double max_allowed_error = 0.1;
+    double error_at_max_cfl = 0.0;
+    double t_test =
+        MathConstants<double>::PI() / 8.0; // Test for a reasonable time period
+
+    while (cfl_high - cfl_low > cfl_tolerance) {
+      double cfl_test = (cfl_low + cfl_high) / 2.0;
+
+      // Run a test simulation with the current CFL
+      solver.initialize(N, t_test, cfl_test);
+      solver.solve();
+
+      // Check both stability and accuracy
+      auto [_, __, ___, error, ____] = solver.get_results();
+
+      // Test if the solution is stable and accurate enough
+      bool is_good =
+          !std::isnan(error) && !std::isinf(error) && error < max_allowed_error;
+
+      if (is_good) {
+        cfl_low = cfl_test;
+        error_at_max_cfl = error;
+      } else {
+        cfl_high = cfl_test;
+      }
+    }
+
+    // Use a safety factor to ensure stability in all cases
+    // double safety_factor = 0.8;
+    double safety_factor = 1.;
+    double safe_max_cfl = cfl_low * safety_factor;
+
+    max_cfls.push_back(safe_max_cfl);
 
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
-              << std::setw(20) << max_cfl << std::endl;
+              << std::setw(20) << safe_max_cfl << std::scientific
+              << std::setprecision(6) << std::setw(25) << error_at_max_cfl
+              << std::endl;
   }
+
   return max_cfls;
 }
 
@@ -85,38 +127,6 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
     auto [x, u_numerical, u_exact, error, time] = solver.get_results();
     errors.push_back(error);
 
-    using namespace matplot;
-
-    auto fig = figure(true);
-    fig->quiet_mode(true);
-    fig->backend()->run_command("unset warnings");
-    fig->size(1280, 960);
-    fig->font_size(18);
-
-    auto p2 = plot(x, u_numerical, "b-o");
-    p2->line_width(3);
-    p2->display_name("Numerical Solution");
-
-    hold(true);
-
-    auto p1 = plot(x, u_exact, "r");
-    p1->line_width(3);
-    p1->display_name("Analytical Solution");
-
-    hold(false);
-
-    auto ax = gca();
-    ax->font_size(18); // Apply font size to axis-level elements
-    ax->xlabel("x");
-    ax->ylabel("u(x,t)");
-    ax->title(
-        "Solution for Burgers Problem (Fourier Collocation) at tfinal with N=" +
-        std::to_string(N_values[i]) + ", CFL=" + std::to_string(cfl));
-
-    legend()->font_size(16);
-
-    save("burger_tfinal_fc_" + std::to_string(N_values[i]) + ".png");
-
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(15) << cfl << std::scientific << std::setprecision(6)
               << std::setw(20) << error << std::fixed << std::setprecision(4)
@@ -148,14 +158,7 @@ void burgers_time_evolution(const std::vector<double> &cfl_values) {
   double nu = 0.1;
 
   // Find the CFL for N=128 from our results
-  std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
-  double cfl_128 = 0.5; // default
-  for (size_t i = 0; i < N_values.size(); ++i) {
-    if (N_values[i] == N) {
-      cfl_128 = cfl_values[i];
-      break;
-    }
-  }
+  double cfl_128 = cfl_values[5]; // default
 
   std::cout << "\n=== Part 2(d): Time Evolution for N = " << N
             << " ===" << std::endl;
@@ -174,6 +177,37 @@ void burgers_time_evolution(const std::vector<double> &cfl_values) {
     solver.solve();
 
     auto [x, u_numerical, u_exact, error, time] = solver.get_results();
+    using namespace matplot;
+
+    auto fig = figure(true);
+    fig->quiet_mode(true);
+    fig->backend()->run_command("unset warnings");
+    fig->size(1280, 960);
+    fig->font_size(18);
+
+    auto p2 = plot(x, u_numerical, "b-o");
+    p2->line_width(3);
+    p2->display_name("Numerical Solution");
+
+    hold(true);
+
+    auto p1 = plot(x, u_exact, "r");
+    p1->line_width(3);
+    p1->display_name("Analytical Solution");
+
+    hold(false);
+
+    auto ax = gca();
+    ax->font_size(18); // Apply font size to axis-level elements
+    ax->xlabel("x");
+    ax->ylabel("u(x,t)");
+    ax->title("Solution for Burgers Problem (Fourier Collocation) at tfinal=" +
+              std::to_string(t_final) +
+              "with N=128 & CFL=" + std::to_string(cfl_128));
+
+    legend()->font_size(16);
+
+    save("burger_tfinal_fc_128_" + std::to_string(t_final) + ".png");
 
     std::cout << std::fixed << std::setprecision(4) << std::setw(15) << t_final
               << std::scientific << std::setprecision(6) << std::setw(20)
@@ -187,34 +221,71 @@ std::vector<double> determine_cfl_values() {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
   std::vector<double> cfl_values;
   double nu = 0.1;
+  double t_test =
+      MathConstants<double>::PI() / 8.0; // Test for a reasonable time period
 
   std::cout << "\n=== Part 3(b): Determining Maximum CFL Values for "
                "Fourier-Galerkin ==="
             << std::endl;
-  std::cout << "Parameters: ν = " << nu << std::endl;
-  std::cout << std::setw(8) << "N" << std::setw(20) << "Max CFL" << std::endl;
-  std::cout << std::string(28, '-') << std::endl;
+  std::cout << "Parameters: ν = " << nu << ", test time = " << t_test
+            << std::endl;
+  std::cout << std::setw(8) << "N" << std::setw(20) << "Max CFL"
+            << std::setw(25) << "Error at Max CFL" << std::endl;
+  std::cout << std::string(53, '-') << std::endl;
 
   for (int N : N_values) {
     auto galerkin = std::make_shared<FourierGalerkin<double>>();
     BurgersGalerkinSolver<double> solver(galerkin, nu);
-    solver.initialize(N, 1.0); // Initialize for CFL testing
 
-    double max_cfl = solver.find_cfl_limit();
-    cfl_values.push_back(max_cfl);
+    // Binary search for maximum stable and accurate CFL
+    double cfl_low = 0.01;
+    double cfl_high =
+        0.9; // We can start a bit higher for Galerkin than Collocation
+    double cfl_tolerance = 0.01;
+    double max_allowed_error = 0.1;
+    double error_at_max_cfl = 0.0;
 
-    std::cout << std::setw(8) << N << std::fixed << std::setprecision(3)
-              << std::setw(20) << max_cfl << std::endl;
+    while (cfl_high - cfl_low > cfl_tolerance) {
+      double cfl_test = (cfl_low + cfl_high) / 2.0;
+
+      try {
+        // Initialize and solve with current CFL
+        solver.initialize(N, t_test, cfl_test);
+        solver.solve();
+
+        // Check error against exact solution
+        auto [_, __, ___, error, ____, _____] = solver.get_results();
+
+        // Test if solution is stable and accurate enough
+        bool is_good = !std::isnan(error) && !std::isinf(error) &&
+                       error < max_allowed_error;
+
+        if (is_good) {
+          cfl_low = cfl_test;
+          error_at_max_cfl = error;
+        } else {
+          cfl_high = cfl_test;
+        }
+      } catch (...) {
+        // Any exception means instability
+        cfl_high = cfl_test;
+      }
+    }
+
+    // Apply a safety factor
+    double safety_factor = 0.85; // Slightly more conservative than before
+    double safe_max_cfl = cfl_low * safety_factor;
+
+    cfl_values.push_back(safe_max_cfl);
+
+    std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
+              << std::setw(20) << safe_max_cfl << std::scientific
+              << std::setprecision(6) << std::setw(25) << error_at_max_cfl
+              << std::endl;
   }
-
-  std::cout << "\nDoes the definition of the time-step restriction in Eq. 4 "
-               "seem reasonable?"
-            << std::endl;
-  std::cout << "Comparing with collocation method CFL values..." << std::endl;
 
   return cfl_values;
 }
-
 // Part 3(c): Convergence study using CFL values from Part 3(b)
 void galerkin_convergence_study(const std::vector<double> &cfl_values) {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
@@ -233,8 +304,8 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
 
   for (size_t i = 0; i < N_values.size(); ++i) {
     int N = N_values[i];
-    // double cfl = cfl_values[i];
-    double cfl = 0.5;
+    double cfl = cfl_values[i];
+    // double cfl = 0.5;
 
     auto galerkin = std::make_shared<FourierGalerkin<double>>();
     BurgersGalerkinSolver<double> solver(galerkin, nu);
@@ -297,6 +368,7 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
   }
 }
 // Part 3(d): Comparison between Galerkin and Collocation
+// TODO: (dhub) TODO add final cfl values
 void compare_methods(const std::vector<double> &collocation_cfls,
                      const std::vector<double> &galerkin_cfls) {
   std::vector<int> N_values = {64, 128};
@@ -432,7 +504,7 @@ int main(int argc, char *argv[]) {
         std::cout << "\nWarning: Part 3(c) requires CFL values from Part 3(b)."
                   << std::endl;
         std::cout << "Running Part 3(b) first..." << std::endl;
-        // galerkin_cfls = determine_cfl_values();
+        galerkin_cfls = determine_cfl_values();
       }
       galerkin_convergence_study(galerkin_cfls);
     }
