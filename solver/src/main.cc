@@ -53,31 +53,6 @@ std::vector<double> burgers_find_max_cfl() {
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(20) << max_cfl << std::endl;
   }
-
-  // Analyze if CFL definition is reasonable
-  std::cout
-      << "\nDoes the time-step restriction as given in Eq. 3 seem reasonable?"
-      << std::endl;
-  std::cout
-      << "For spectral methods, CFL typically decreases with increasing N."
-      << std::endl;
-  std::cout << "Observed trend: ";
-  bool decreasing_trend = true;
-  for (size_t i = 1; i < max_cfls.size(); ++i) {
-    if (max_cfls[i] >= max_cfls[i - 1]) {
-      decreasing_trend = false;
-      break;
-    }
-  }
-  if (decreasing_trend) {
-    std::cout
-        << "CFL decreases with N - this is reasonable for spectral methods."
-        << std::endl;
-  } else {
-    std::cout << "CFL does not monotonically decrease - may need investigation."
-              << std::endl;
-  }
-
   return max_cfls;
 }
 
@@ -97,7 +72,8 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
 
   for (size_t i = 0; i < N_values.size(); ++i) {
     int N = N_values[i];
-    double cfl = cfl_values[i];
+    double cfl = cfl_values[i] * .2;
+    // double cfl = 0.5;
 
     auto spectral = std::make_shared<SpectralFourier<double>>(MethodType::ODD);
     spectral->build(N);
@@ -134,7 +110,7 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
     ax->xlabel("x");
     ax->ylabel("u(x,t)");
     ax->title("Solution for Burgers Problem at tfinal with N=" +
-              std::to_string(N_values[i]));
+              std::to_string(N_values[i]) + ", CFL=" + std::to_string(cfl));
 
     legend()->font_size(16);
 
@@ -266,7 +242,8 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
 
   for (size_t i = 0; i < N_values.size(); ++i) {
     int N = N_values[i];
-    double cfl = cfl_values[i];
+    // double cfl = cfl_values[i];
+    double cfl = 0.5;
 
     auto galerkin = std::make_shared<FourierGalerkin<double>>();
     BurgersGalerkinSolver<double> solver(galerkin, nu);

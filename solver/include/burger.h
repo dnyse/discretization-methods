@@ -110,14 +110,14 @@ public:
 
     // Binary search for maximum stable CFL
     T cfl_low = T(0.01);
-    T cfl_high = T(4.0);
+    T cfl_high = T(2.0);
     T cfl_tolerance = T(0.01);
 
     while (cfl_high - cfl_low > cfl_tolerance) {
       T cfl_test = (cfl_low + cfl_high) / T(2);
 
       // Test stability with a short run
-      if (is_stable_with_cfl(cfl_test, 25)) {
+      if (is_stable_with_cfl(cfl_test, 100)) {
         cfl_low = cfl_test;
       } else {
         cfl_high = cfl_test;
