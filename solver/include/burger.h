@@ -203,18 +203,15 @@ public:
     // Calculate time step using Eq. (4) from exam
     T k_max = T(N) / T(2);
 
-    // Find max|u(xⱼ)| from current solution
-    T max_u = T(0);
+    T max_constraint = T(0);
     for (int j = 0; j <= N; j++) {
-      T abs_u = abs(u_[j]);
-      if (abs_u > max_u) {
-        max_u = abs_u;
+      T dt_constraint = abs(u_[j]) * k_max + nu_ * k_max * k_max;
+      if (dt_constraint > max_constraint) {
+        max_constraint = dt_constraint;
       }
     }
 
-    // Apply formula (4): dt ≤ CFL × [max|u(xⱼ)|*k_max + ν*(k_max)²]⁻¹
-    T dt_constraint = max_u * k_max + nu_ * k_max * k_max;
-    dt_ = cfl_ / dt_constraint;
+    dt_ = cfl_ / max_constraint;
 
     // Adjust dt to ensure we hit t_final exactly
     num_steps_ = static_cast<int>(ceil(t_final / dt_));
@@ -225,10 +222,24 @@ public:
     auto start_time = std::chrono::high_resolution_clock::now();
 
     T t = T(0);
-    for (int step = 0; step < num_steps_; ++step) {
+    T k_max = T(N_) / T(2);
+    while (t < t_final_) {
       // Use the existing RungeKutta4 integrator
-      u_ = integrator_->integrate_burgers(u_, dt_, *galerkin_, nu_);
-      t += dt_;
+      T max_constraint = T(0);
+      for (int j = 0; j <= u_.size(); j++) {
+        T dt_constraint = abs(u_[j]) * k_max + nu_ * k_max * k_max;
+        if (dt_constraint > max_constraint) {
+          max_constraint = dt_constraint;
+        }
+      }
+
+      T dt = cfl_ / max_constraint;
+
+      if (t + dt > t_final_) {
+        dt = t_final_ - t;
+      }
+      u_ = integrator_->integrate_burgers(u_, dt, *galerkin_, nu_);
+      t += dt;
     }
 
     auto end_time = std::chrono::high_resolution_clock::now();

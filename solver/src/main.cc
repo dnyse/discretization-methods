@@ -109,12 +109,13 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
     ax->font_size(18); // Apply font size to axis-level elements
     ax->xlabel("x");
     ax->ylabel("u(x,t)");
-    ax->title("Solution for Burgers Problem at tfinal with N=" +
-              std::to_string(N_values[i]) + ", CFL=" + std::to_string(cfl));
+    ax->title(
+        "Solution for Burgers Problem (Fourier Collocation) at tfinal with N=" +
+        std::to_string(N_values[i]) + ", CFL=" + std::to_string(cfl));
 
     legend()->font_size(16);
 
-    save("burger_tfinal_" + std::to_string(N_values[i]) + ".png");
+    save("burger_tfinal_fc_" + std::to_string(N_values[i]) + ".png");
 
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(15) << cfl << std::scientific << std::setprecision(6)
@@ -134,16 +135,6 @@ void burgers_convergence_study_with_cfl(const std::vector<double> &cfl_values) {
     std::cout << std::setw(8) << N_values[i] << std::fixed
               << std::setprecision(2) << std::setw(20) << rate << std::endl;
   }
-
-  std::cout
-      << "\nDoes the convergence rate correspond to what you would expect?"
-      << std::endl;
-  std::cout << "Spectral methods typically show exponential convergence for "
-               "smooth periodic solutions."
-            << std::endl;
-  std::cout << "The Burgers' sawtooth solution has steep gradients, which may "
-               "affect convergence."
-            << std::endl;
 }
 
 // Part 2(d): Burgers time evolution
@@ -254,6 +245,38 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
         solver.get_results();
     errors.push_back(error);
 
+    using namespace matplot;
+
+    auto fig = figure(true);
+    fig->quiet_mode(true);
+    fig->backend()->run_command("unset warnings");
+    fig->size(1280, 960);
+    fig->font_size(18);
+
+    auto p2 = plot(x, u_numerical, "b-o");
+    p2->line_width(3);
+    p2->display_name("Numerical Solution");
+
+    hold(true);
+
+    auto p1 = plot(x, u_exact, "r");
+    p1->line_width(3);
+    p1->display_name("Analytical Solution");
+
+    hold(false);
+
+    auto ax = gca();
+    ax->font_size(18);
+    ax->xlabel("x");
+    ax->ylabel("u(x,t)");
+    ax->title(
+        "Solution for Burgers Problem (Fourier Galerkin) at tfinal with N=" +
+        std::to_string(N_values[i]) + ", CFL=" + std::to_string(cfl));
+
+    legend()->font_size(16);
+
+    save("burger_tfinal_fg_" + std::to_string(N_values[i]) + ".png");
+
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(15) << cfl << std::scientific << std::setprecision(6)
               << std::setw(20) << error << std::fixed << std::setprecision(4)
@@ -272,12 +295,6 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
     std::cout << std::setw(8) << N_values[i] << std::fixed
               << std::setprecision(2) << std::setw(20) << rate << std::endl;
   }
-
-  std::cout << "\nWhat is the convergence rate observed?" << std::endl;
-  std::cout << "Does it correspond to what you would expect?" << std::endl;
-  std::cout << "Fourier-Galerkin should show spectral convergence for smooth "
-               "solutions."
-            << std::endl;
 }
 // Part 3(d): Comparison between Galerkin and Collocation
 void compare_methods(const std::vector<double> &collocation_cfls,
@@ -334,11 +351,6 @@ void compare_methods(const std::vector<double> &collocation_cfls,
               << std::setw(20) << error_c << std::setw(20) << error_g
               << std::endl;
   }
-
-  std::cout
-      << "\nDo you see any significant difference between the two solutions?"
-      << std::endl;
-  std::cout << "Any reason to use the Galerkin formulation?" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -420,7 +432,7 @@ int main(int argc, char *argv[]) {
         std::cout << "\nWarning: Part 3(c) requires CFL values from Part 3(b)."
                   << std::endl;
         std::cout << "Running Part 3(b) first..." << std::endl;
-        galerkin_cfls = determine_cfl_values();
+        // galerkin_cfls = determine_cfl_values();
       }
       galerkin_convergence_study(galerkin_cfls);
     }

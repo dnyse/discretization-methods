@@ -264,7 +264,7 @@ public:
     return rhs_hat;
   }
 
-  std::vector<T> compute_burgers_rhs(std::vector<T> &u, T nu) {
+  std::vector<T> compute_burgers_rhs(std::vector<T> &u, T nu) override {
     auto rhs_hat = compute_burgers_spectral_rhs(u, nu);
     return ifft(rhs_hat);
   }

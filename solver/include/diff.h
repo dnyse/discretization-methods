@@ -17,7 +17,7 @@ public:
   virtual const std::vector<T> &get_numerical_sol() const;
   virtual std::vector<T> compute_F(std::vector<T> &u);
   const std::vector<T> &get_x() const;
-  std::vector<T> compute_burgers_rhs(std::vector<T> &u, T nu);
+  virtual std::vector<T> compute_burgers_rhs(std::vector<T> &u, T nu);
 
 protected:
   std::vector<T> x_;
