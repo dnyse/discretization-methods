@@ -1,0 +1,22 @@
+\section{Solving Burger's equation using Fourier Galerkin}
+In part 3  this section explores the Fourier Galerkin method for solving the Burgers' equation.
+\begin{equation}
+	\frac{\partial u(x, t)}{\partial t} + u(x, t) \frac{\partial u(x, t)}{\partial x} = \nu \frac{\partial^2 u(x, t)}{\partial x^2}
+\end{equation}
+with the same parameters ($c = 4.0$ and $\nu = 0.1$) and periodic boundary conditions on $x \in [0, 2\pi]$.\newline
+The Fourier Galerkin method expands the solution in terms of Fourier modes:
+\begin{equation}
+	u(x, t) = \sum_{n=-N/2}^{N/2} \hat{u}_n(t)e^{inx}
+\end{equation}
+where $\hat{u}_n(t)$ are the time-dependent Fourier coefficients. Unlike the Collocation method which satisfies the PDE at specific grid points, the Galerkin method requires the residual to be orthogonal to each basis function, leading to a system of ODEs for the Fourier coefficients.
+For the time integration, we used the same 4th-order Runge-Kutta scheme as in Part 2, but with a modified time step restriction:
+\begin{equation}
+	\Delta t \leq \text{CFL} \times \left[ \max_{x_j} \left(|u(x_j)| k_{max} + \nu (k_{max})^2  \right)\right]^{-1}
+\end{equation}
+where $k_{max} = N/2$ is the maximum wavenumber in the spectral representation.
+
+\subsection{Determining Maximum CFL Values}
+
+\subsection{Convergence Study}
+
+\subsection{Comparison to Fourier Collocation}

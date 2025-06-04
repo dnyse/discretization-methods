@@ -1,6 +1,6 @@
 INFO:  latexindent.pl version 3.24.5, 2025-03-13, a script to indent .tex files
        latexindent.pl lives here: /opt/homebrew/Cellar/latexindent/3.24.5/libexec/bin/
-       Sun Apr 27 15:19:37 2025
+       Mon May 19 23:58:33 2025
        Reading input from STDIN
 INFO:  Processing switches:
 INFO:  Directory for backup files and log file indent.log:
