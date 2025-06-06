@@ -55,7 +55,7 @@ std::vector<double> burgers_find_max_cfl() {
   auto ax = gca();
   ax->font_size(18); // Apply font size to axis-level elements
   ax->xlabel("cfls");
-  ax->ylabel("L_inf error");
+  ax->ylabel("L inf error");
   ax->title("Optimal cfl Fourier Collocation Method");
 
   for (int N : N_values) {
@@ -71,7 +71,7 @@ std::vector<double> burgers_find_max_cfl() {
         MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
 
     double cfl_test = 0.0;
-    double error_prev = 0.0;
+    double error_prev = -10000.0;
     double cfl_final = 0.0;
     std::vector<double> errors;
     std::vector<double> cfls;
@@ -82,10 +82,13 @@ std::vector<double> burgers_find_max_cfl() {
       solver.initialize(N, t_test, cfl_test);
       solver.solve();
       auto [_, __, ___, error, ____] = solver.get_results();
+      error_prev = error_prev == -10000.0 ? error : error_prev;
       // bool is_good = !std::isnan(error) && !std::isinf(error) &&
       // std::abs(error) < 1;
-      bool is_good = !std::isnan(error) && !std::isinf(error);
-      // &&std::abs(error) - std::abs(error_prev) < 0.5;
+      bool is_good = !std::isnan(error) && !std::isinf(error) &&
+                     std::abs(error) - std::abs(error_prev) < 0.25;
+      // std::cout << "N=" << N << " " << error << " is good " << is_good
+      // << std::endl;
       if (is_good) {
         errors.push_back(error);
         cfls.push_back(cfl_test);
@@ -281,7 +284,7 @@ std::vector<double> determine_cfl_values() {
         MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
 
     double cfl_test = cfl_low;
-    double error_prev = 0.0;
+    double error_prev = -10000.0;
     double cfl_final = 0.0;
     std::vector<double> errors;
     std::vector<double> cfls;
@@ -293,10 +296,11 @@ std::vector<double> determine_cfl_values() {
       solver.solve();
       // auto [_, __, ___, error, ____] = solver.get_results();
       auto [_, __, ___, error, ____, _____] = solver.get_results();
+      error_prev = error_prev == -10000.0 ? error : error_prev;
       // bool is_good = !std::isnan(error) && !std::isinf(error) &&
       // std::abs(error) < 1;
       bool is_good = !std::isnan(error) && !std::isinf(error) &&
-                     std::abs(error) - std::abs(error_prev) < 1;
+                     std::abs(error) - std::abs(error_prev) < 0.25;
       if (is_good) {
         errors.push_back(error);
         cfls.push_back(cfl_test);
