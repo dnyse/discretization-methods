@@ -43,7 +43,7 @@ std::vector<double> burgers_find_max_cfl() {
             << std::setw(25) << "Error at Max CFL" << std::endl;
   std::cout << std::string(53, '-') << std::endl;
 
-  double t_test = MathConstants<double>::PI() / 4.0;
+  double t_test = MathConstants<double>::PI() / 8.0;
 
   using namespace matplot;
   auto fig = figure(true);
@@ -56,7 +56,7 @@ std::vector<double> burgers_find_max_cfl() {
   ax->font_size(18); // Apply font size to axis-level elements
   ax->xlabel("cfls");
   ax->ylabel("L_inf error");
-  ax->title("Optimal cfl");
+  ax->title("Optimal cfl Fourier Collocation Method");
 
   for (int N : N_values) {
     auto spectral = std::make_shared<SpectralFourier<double>>(MethodType::ODD);
@@ -67,49 +67,34 @@ std::vector<double> burgers_find_max_cfl() {
     // Binary search for maximum stable and accurate CFL
     double cfl_low = 0.05;
     double cfl_high = 2;
-    // double cfl_tolerance = 0.01;
-    // double max_allowed_error = 0.01;
-    // double error_at_max_cfl = 0.0;
     double t_test =
-        MathConstants<double>::PI() / 8.0; // Test for a reasonable time period
+        MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
 
-    // while (cfl_high - cfl_low > cfl_tolerance) {
-    //   double cfl_test = (cfl_low + cfl_high) / 2.0;
-    //
-    //   // Run a test simulation with the current CFL
-    //   solver.initialize(N, t_test, cfl_test);
-    //   solver.solve();
-    //
-    //   // Check both stability and accuracy
-    //   auto [_, __, ___, error, ____] = solver.get_results();
-    //
-    //   // Test if the solution is stable and accurate enough
-    //   bool is_good =
-    //       !std::isnan(error) && !std::isinf(error) && error <
-    //       max_allowed_error;
-    //
-    //   if (is_good) {
-    //     cfl_low = cfl_test;
-    //     error_at_max_cfl = error;
-    //   } else {
-    //     cfl_high = cfl_test;
-    //   }
-    // }
-    //
     double cfl_test = 0.0;
+    double error_prev = 0.0;
+    double cfl_final = 0.0;
     std::vector<double> errors;
     std::vector<double> cfls;
-
+    double safe_max_cfl = cfl_low;
+    double error_at_max_cfl = 0.0;
     while (cfl_test < cfl_high) {
       cfl_test += cfl_low;
       solver.initialize(N, t_test, cfl_test);
       solver.solve();
       auto [_, __, ___, error, ____] = solver.get_results();
-      bool is_good = !std::isnan(error) && !std::isinf(error) && std::abs(error) < 50;
+      // bool is_good = !std::isnan(error) && !std::isinf(error) &&
+      // std::abs(error) < 1;
+      bool is_good = !std::isnan(error) && !std::isinf(error);
+      // &&std::abs(error) - std::abs(error_prev) < 0.5;
       if (is_good) {
         errors.push_back(error);
         cfls.push_back(cfl_test);
+        safe_max_cfl = cfl_test;
+        error_at_max_cfl = error;
+      } else {
+        break;
       }
+      error_prev = error;
     }
 
     auto p = plot(cfls, errors);
@@ -117,27 +102,22 @@ std::vector<double> burgers_find_max_cfl() {
     p->display_name("N=" + std::to_string(N));
 
     hold(true);
-
+    //
     // Use a safety factor to ensure stability in all cases
     // double safety_factor = 0.8;
-    double safety_factor = 1.;
-    double safe_max_cfl = cfl_low * safety_factor;
-
+    // double safe_max_cfl = cfl_low * safety_factor;
     max_cfls.push_back(safe_max_cfl);
-
-    // std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
-    //           << std::setw(20) << safe_max_cfl << std::scientific
-    //           << std::setprecision(6) << std::setw(25) << error_at_max_cfl
-    //           << std::endl;
-    std::cout << "Done " << N << " with nr of errors " << errors.size()
+    std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
+              << std::setw(20) << safe_max_cfl << std::scientific
+              << std::setprecision(6) << std::setw(25) << error_at_max_cfl
               << std::endl;
+    // std::cout << "Done " << N << " with nr of errors " << errors.size()
+    //           << std::endl;
   }
-
   hold(false);
   legend()->font_size(16);
-
-  save("cfl_errors.png");
-
+  //
+  save("cfl_errors_fc.png");
   return max_cfls;
 }
 
@@ -200,8 +180,7 @@ void burgers_time_evolution(const std::vector<double> &cfl_values) {
   double nu = 0.1;
 
   // Find the CFL for N=128 from our results
-  // double cfl_128 = cfl_values[5];
-  double cfl_128 = 0.9;
+  double cfl_128 = cfl_values[5];
 
   std::cout << "\n=== Part 2(d): Time Evolution for N = " << N
             << " ===" << std::endl;
@@ -263,6 +242,7 @@ void burgers_time_evolution(const std::vector<double> &cfl_values) {
 std::vector<double> determine_cfl_values() {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
   std::vector<double> cfl_values;
+  std::vector<double> max_cfls;
   double nu = 0.1;
   double t_test =
       MathConstants<double>::PI() / 8.0; // Test for a reasonable time period
@@ -276,57 +256,128 @@ std::vector<double> determine_cfl_values() {
             << std::setw(25) << "Error at Max CFL" << std::endl;
   std::cout << std::string(53, '-') << std::endl;
 
+  using namespace matplot;
+  auto fig = figure(true);
+  fig->quiet_mode(true);
+  fig->backend()->run_command("unset warnings");
+  fig->size(1280, 960);
+  fig->font_size(18);
+
+  auto ax = gca();
+  ax->font_size(18); // Apply font size to axis-level elements
+  ax->xlabel("cfls");
+  ax->ylabel("L_inf error");
+  ax->title("Optimal cfl Fourier Galerkin Method");
+
   for (int N : N_values) {
     auto galerkin = std::make_shared<FourierGalerkin<double>>();
     BurgersGalerkinSolver<double> solver(galerkin, nu);
 
     // Binary search for maximum stable and accurate CFL
-    double cfl_low = 0.01;
-    double cfl_high = 0.9;
-    double cfl_tolerance = 0.01;
-    double max_allowed_error = 0.0001;
+    double cfl_low = 3;
+    double cfl_high = 6;
+    double cfl_step = 0.05;
+    double t_test =
+        MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
+
+    double cfl_test = cfl_low;
+    double error_prev = 0.0;
+    double cfl_final = 0.0;
+    std::vector<double> errors;
+    std::vector<double> cfls;
+    double safe_max_cfl = cfl_low;
     double error_at_max_cfl = 0.0;
-
-    while (cfl_high - cfl_low > cfl_tolerance) {
-      double cfl_test = (cfl_low + cfl_high) / 2.0;
-
-      try {
-        // Initialize and solve with current CFL
-        solver.initialize(N, t_test, cfl_test);
-        solver.solve();
-
-        // Check error against exact solution
-        auto [_, __, ___, error, ____, _____] = solver.get_results();
-
-        // Test if solution is stable and accurate enough
-        bool is_good = !std::isnan(error) && !std::isinf(error) &&
-                       error < max_allowed_error;
-
-        if (is_good) {
-          cfl_low = cfl_test;
-          error_at_max_cfl = error;
-        } else {
-          cfl_high = cfl_test;
-        }
-      } catch (...) {
-        // Any exception means instability
-        cfl_high = cfl_test;
+    while (cfl_test < cfl_high) {
+      cfl_test += cfl_step;
+      solver.initialize(N, t_test, cfl_test);
+      solver.solve();
+      // auto [_, __, ___, error, ____] = solver.get_results();
+      auto [_, __, ___, error, ____, _____] = solver.get_results();
+      // bool is_good = !std::isnan(error) && !std::isinf(error) &&
+      // std::abs(error) < 1;
+      bool is_good = !std::isnan(error) && !std::isinf(error) &&
+                     std::abs(error) - std::abs(error_prev) < 1;
+      if (is_good) {
+        errors.push_back(error);
+        cfls.push_back(cfl_test);
+        safe_max_cfl = cfl_test;
+        error_at_max_cfl = error;
+      } else {
+        break;
       }
+      error_prev = error;
     }
+    //
+    auto p = plot(cfls, errors);
+    p->line_width(3);
+    p->display_name("N=" + std::to_string(N));
 
-    // Apply a safety factor
-    double safety_factor = 1;
-    double safe_max_cfl = cfl_low * safety_factor;
-
-    cfl_values.push_back(safe_max_cfl);
-
+    hold(true);
+    //
+    // Use a safety factor to ensure stability in all cases
+    // double safety_factor = 0.8;
+    // double safe_max_cfl = cfl_low * safety_factor;
+    max_cfls.push_back(safe_max_cfl);
     std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
               << std::setw(20) << safe_max_cfl << std::scientific
               << std::setprecision(6) << std::setw(25) << error_at_max_cfl
               << std::endl;
+    // std::cout << "Done " << N << " with nr of errors " << errors.size()
+    //           << std::endl;
   }
+  hold(false);
+  legend()->font_size(16);
+  //
+  save("cfl_errors_fg.png");
+  return max_cfls;
 
-  return cfl_values;
+  // Binary search for maximum stable and accurate CFL
+  //   double cfl_low = 0.01;
+  //   double cfl_high = 0.9;
+  //   double cfl_tolerance = 0.01;
+  //   double max_allowed_error = 0.0001;
+  //   double error_at_max_cfl = 0.0;
+  //
+  //   while (cfl_high - cfl_low > cfl_tolerance) {
+  //     double cfl_test = (cfl_low + cfl_high) / 2.0;
+  //
+  //     try {
+  //       // Initialize and solve with current CFL
+  //       solver.initialize(N, t_test, cfl_test);
+  //       solver.solve();
+  //
+  //       // Check error against exact solution
+  //       auto [_, __, ___, error, ____, _____] = solver.get_results();
+  //
+  //       // Test if solution is stable and accurate enough
+  //       bool is_good = !std::isnan(error) && !std::isinf(error) &&
+  //                      error < max_allowed_error;
+  //
+  //       if (is_good) {
+  //         cfl_low = cfl_test;
+  //         error_at_max_cfl = error;
+  //       } else {
+  //         cfl_high = cfl_test;
+  //       }
+  //     } catch (...) {
+  //       // Any exception means instability
+  //       cfl_high = cfl_test;
+  //     }
+  //   }
+  //
+  //   // Apply a safety factor
+  //   double safety_factor = 1;
+  //   double safe_max_cfl = cfl_low * safety_factor;
+  //
+  //   cfl_values.push_back(safe_max_cfl);
+  //
+  //   std::cout << std::setw(8) << N << std::fixed << std::setprecision(4)
+  //             << std::setw(20) << safe_max_cfl << std::scientific
+  //             << std::setprecision(6) << std::setw(25) << error_at_max_cfl
+  //             << std::endl;
+  // }
+  //
+  // return cfl_values;
 }
 // Part 3(c): Convergence study using CFL values from Part 3(b)
 void galerkin_convergence_study(const std::vector<double> &cfl_values) {
@@ -510,7 +561,7 @@ int main(int argc, char *argv[]) {
       collocation_cfls = burgers_find_max_cfl();
     }
 
-    collocation_cfls = {1.4, 1.25, 1.18, 1, 0.95, 0.9, 0.75, 0.65};
+    // collocation_cfls = {1.4, 1.25, 1.18, 1, 0.95, 0.9, 0.75, 0.65};
 
     if (run_ex02c) {
       if (collocation_cfls.empty()) {
