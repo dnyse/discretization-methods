@@ -232,36 +232,36 @@ Therefore, Equation \ref{eq:dEdt_substituted} becomes:
 since $\nu > 0$ (a sufficient condition for wellposedness derived earlier).
 This proves that the discrete energy $E(t)$ is non-increasing ($E(t) \le E(0)$), establishing the \textbf{unconditional stability} of the semi-discrete Fourier Collocation approximation in the discrete $L^2$-norm analogue.
 
-\subsubsection{Alternative Proof via Fourier Analysis}
-Let $u_N(x,t) = \sum_{n=-N/2}^{N/2} \hat{u}_n(t) e^{inx}$ be the Fourier series representation of the solution (here, $\hat{u}_n$ denote the time-dependent Fourier coefficients, equivalent to $\tilde{u}_n$ used earlier).
-Applying this to Equation \ref{eq:adv_diff_const_U0}, and noting that $e^{inx}$ are eigenfunctions of the Fourier differentiation operators:
-$\frac{\partial}{\partial x} (e^{inx}) = in e^{inx}$ and $\frac{\partial^2}{\partial x^2} (e^{inx}) = (in)^2 e^{inx} = -n^2 e^{inx}$.
-The PDE transforms into a system of ODEs for each mode $\hat{u}_n(t)$:
-\begin{equation}
-\frac{d\hat{u}_n(t)}{dt} + U_0 (in \hat{u}_n(t)) = \nu (-n^2 \hat{u}_n(t)).
-\end{equation}
-Thus,
-\begin{equation}
-\frac{d\hat{u}_n(t)}{dt} = -(inU_0 + n^2\nu)\hat{u}_n(t).
-\label{eq:modal_ode}
-\end{equation}
-The solution to this ODE is:
-\begin{equation}
-\hat{u}_n(t) = \hat{u}_n(0) e^{-(inU_0 + n^2\nu)t}.
-\label{eq:modal_solution}
-\end{equation}
-The magnitude of each coefficient evolves as:
-\begin{equation}
-|\hat{u}_n(t)| = |\hat{u}_n(0) e^{-inU_0 t} e^{-n^2\nu t}| = |\hat{u}_n(0)| |e^{-inU_0 t}| |e^{-n^2\nu t}| = |\hat{u}_n(0)| e^{-n^2\nu t}.
-\label{eq:modal_magnitude}
-\end{equation}
-Since $\nu > 0$ (from the wellposedness conditions) and $n^2 \ge 0$, the term $e^{-n^2\nu t} \leq 1$ for all $t \ge 0$.
-Therefore, $|\hat{u}_n(t)| \leq |\hat{u}_n(0)|$ for each mode $n$.
-By Parseval's identity for the $L^2[0, 2\pi]$ norm:
-\begin{equation}
-\|u_N(t)\|_{L^2}^2 = 2\pi \sum_{n=-N/2}^{N/2} |\hat{u}_n(t)|^2 \leq 2\pi \sum_{n=-N/2}^{N/2} |\hat{u}_n(0)|^2 = \|u_N(0)\|_{L^2}^2.
-\label{eq:parseval_stability}
-\end{equation}
-This shows that the $L^2$-norm of the solution does not grow in time, confirming unconditional stability.
-
+% \subsubsection{Alternative Proof via Fourier Analysis}
+% Let $u_N(x,t) = \sum_{n=-N/2}^{N/2} \hat{u}_n(t) e^{inx}$ be the Fourier series representation of the solution (here, $\hat{u}_n$ denote the time-dependent Fourier coefficients, equivalent to $\tilde{u}_n$ used earlier).
+% Applying this to Equation \ref{eq:adv_diff_const_U0}, and noting that $e^{inx}$ are eigenfunctions of the Fourier differentiation operators:
+% $\frac{\partial}{\partial x} (e^{inx}) = in e^{inx}$ and $\frac{\partial^2}{\partial x^2} (e^{inx}) = (in)^2 e^{inx} = -n^2 e^{inx}$.
+% The PDE transforms into a system of ODEs for each mode $\hat{u}_n(t)$:
+% \begin{equation}
+% \frac{d\hat{u}_n(t)}{dt} + U_0 (in \hat{u}_n(t)) = \nu (-n^2 \hat{u}_n(t)).
+% \end{equation}
+% Thus,
+% \begin{equation}
+% \frac{d\hat{u}_n(t)}{dt} = -(inU_0 + n^2\nu)\hat{u}_n(t).
+% \label{eq:modal_ode}
+% \end{equation}
+% The solution to this ODE is:
+% \begin{equation}
+% \hat{u}_n(t) = \hat{u}_n(0) e^{-(inU_0 + n^2\nu)t}.
+% \label{eq:modal_solution}
+% \end{equation}
+% The magnitude of each coefficient evolves as:
+% \begin{equation}
+% |\hat{u}_n(t)| = |\hat{u}_n(0) e^{-inU_0 t} e^{-n^2\nu t}| = |\hat{u}_n(0)| |e^{-inU_0 t}| |e^{-n^2\nu t}| = |\hat{u}_n(0)| e^{-n^2\nu t}.
+% \label{eq:modal_magnitude}
+% \end{equation}
+% Since $\nu > 0$ (from the wellposedness conditions) and $n^2 \ge 0$, the term $e^{-n^2\nu t} \leq 1$ for all $t \ge 0$.
+% Therefore, $|\hat{u}_n(t)| \leq |\hat{u}_n(0)|$ for each mode $n$.
+% By Parseval's identity for the $L^2[0, 2\pi]$ norm:
+% \begin{equation}
+% \|u_N(t)\|_{L^2}^2 = 2\pi \sum_{n=-N/2}^{N/2} |\hat{u}_n(t)|^2 \leq 2\pi \sum_{n=-N/2}^{N/2} |\hat{u}_n(0)|^2 = \|u_N(0)\|_{L^2}^2.
+% \label{eq:parseval_stability}
+% \end{equation}
+% This shows that the $L^2$-norm of the solution does not grow in time, confirming unconditional stability.
+%
 % subsection Stability of Fourier Collocation for Constant U_0 (end)

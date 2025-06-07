@@ -31,6 +31,46 @@ void print_usage(const char *prog_name) {
   std::cout << std::endl;
 }
 
+// Add this test function to verify FFT correctness:
+
+void test_fft_correctness() {
+  int N = 8; // Small test case
+  FourierGalerkin<double> fg;
+  fg.create_grid_pts(N);
+
+  // Test with cos(x) - should have coefficients only at k=±1
+  std::vector<double> u(N + 1);
+  for (int j = 0; j <= N; ++j) {
+    double x = 2.0 * M_PI * j / (N + 1);
+    u[j] = cos(x);
+  }
+
+  // Forward FFT
+  auto u_hat = fg.fft(u);
+
+  std::cout << "FFT Test for cos(x):" << std::endl;
+  for (int k = -N / 2; k <= N / 2; ++k) {
+    int idx = (k >= 0) ? k : (N + 1 + k);
+    std::cout << "k=" << k << " idx=" << idx << " coeff=" << u_hat[idx]
+              << std::endl;
+  }
+
+  // Should see:
+  // k=+1: coeff ≈ 0.5
+  // k=-1: coeff ≈ 0.5
+  // All others: coeff ≈ 0
+
+  // Inverse FFT
+  auto u_reconstructed = fg.ifft(u_hat);
+
+  std::cout << "\nReconstruction error:" << std::endl;
+  for (int j = 0; j <= N; ++j) {
+    std::cout << "j=" << j << " original=" << u[j]
+              << " reconstructed=" << u_reconstructed[j]
+              << " error=" << abs(u[j] - u_reconstructed[j]) << std::endl;
+  }
+}
+
 // Part 2(b): Find maximum CFL values experimentally
 std::vector<double> burgers_find_max_cfl() {
   std::vector<int> N_values = {16, 32, 48, 64, 96, 128, 192, 256};
@@ -43,7 +83,7 @@ std::vector<double> burgers_find_max_cfl() {
             << std::setw(25) << "Error at Max CFL" << std::endl;
   std::cout << std::string(53, '-') << std::endl;
 
-  double t_test = MathConstants<double>::PI() / 8.0;
+  double t_test = MathConstants<double>::PI() / 4.0;
 
   using namespace matplot;
   auto fig = figure(true);
@@ -248,7 +288,7 @@ std::vector<double> determine_cfl_values() {
   std::vector<double> max_cfls;
   double nu = 0.1;
   double t_test =
-      MathConstants<double>::PI() / 8.0; // Test for a reasonable time period
+      MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
 
   std::cout << "\n=== Part 3(b): Determining Maximum CFL Values for "
                "Fourier-Galerkin ==="
@@ -277,8 +317,8 @@ std::vector<double> determine_cfl_values() {
     BurgersGalerkinSolver<double> solver(galerkin, nu);
 
     // Binary search for maximum stable and accurate CFL
-    double cfl_low = 3;
-    double cfl_high = 6;
+    double cfl_low = 4;
+    double cfl_high = 8;
     double cfl_step = 0.05;
     double t_test =
         MathConstants<double>::PI() / 4.0; // Test for a reasonable time period
@@ -298,9 +338,9 @@ std::vector<double> determine_cfl_values() {
       auto [_, __, ___, error, ____, _____] = solver.get_results();
       error_prev = error_prev == -10000.0 ? error : error_prev;
       // bool is_good = !std::isnan(error) && !std::isinf(error) &&
-      // std::abs(error) < 1;
+      // std::abs(error) < 10;
       bool is_good = !std::isnan(error) && !std::isinf(error) &&
-                     std::abs(error) - std::abs(error_prev) < 0.25;
+                     std::abs(error) - std::abs(error_prev) < 0.1;
       if (is_good) {
         errors.push_back(error);
         cfls.push_back(cfl_test);
@@ -623,6 +663,7 @@ int main(int argc, char *argv[]) {
         }
       }
       compare_methods(collocation_cfls, galerkin_cfls);
+      // test_fft_correctness();
     }
   }
 
