@@ -1,36 +1,30 @@
 \section{Solving Burger's equation using Fourier Galerkin}
-
 This section explores the Fourier Galerkin method for solving the Burgers' equation:
 \begin{equation}
 	\frac{\partial u(x, t)}{\partial t} + u(x, t) \frac{\partial u(x, t)}{\partial x} = \nu \frac{\partial^2 u(x, t)}{\partial x^2}
 \end{equation}
 with the same parameters ($c = 4.0$ and $\nu = 0.1$) and periodic boundary conditions on $x \in [0, 2\pi]$.
-
+%
 The Fourier Galerkin method expands the solution in terms of Fourier modes:
 \begin{equation}
 	u(x, t) = \sum_{n=-N/2}^{N/2} \hat{u}_n(t)e^{inx}
 \end{equation}
-where $\hat{u}_n(t)$ are the time-dependent Fourier coefficients. Unlike the Collocation method which satisfies the PDE at specific grid points, the Galerkin method requires the residual to be orthogonal to each basis function, leading to a system of ODEs for the Fourier coefficients.
-
-The key algorithmic difference lies in the treatment of nonlinear terms: the Galerkin method transforms between physical and spectral space, computing the nonlinear term $u\frac{\partial u}{\partial x}$ in physical space before transforming back to spectral space for time integration. This approach requires careful dealiasing to prevent spectral aliasing errors, which proved to be a critical implementation challenge.
-
-For time integration, we used the same 4th-order Runge-Kutta scheme as in Part 2, but with a modified time step restriction:
+where $\hat{u}_n(t)$ are the time-dependent Fourier coefficients.
+The Galerkin method transforms the values from physical to spectral space, computing the nonlinear term $u\frac{\partial u}{\partial x}$ in physical space before transforming back to spectral space for time integration. This approach requires dealiasing to prevent spectral aliasing errors, which proved to be a implementation challenge.
+For the time integration, we used the identical 4th-order Runge-Kutta as in Part 2, but with a modified time step restriction:
 \begin{equation}
 	\Delta t \leq \text{CFL} \times \left[ \max_{x_j} \left(|u(x_j)| k_{max} + \nu (k_{max})^2  \right)\right]^{-1}
 \end{equation}
 where $k_{max} = N/2$ is the maximum wavenumber in the spectral representation.
 
 \subsection{Dealiasing Implementation}
-
-The implementation of the Fourier Galerkin method required careful management of aliasing errors arising from the nonlinear term $u\frac{\partial u}{\partial x}$. When computed in physical space, this product generates frequencies up to $2k_{max}$ that exceed the spectral resolution, causing aliasing when transformed back to spectral space.
+The implementation of the Fourier Galerkin method needed careful management of aliasing errors created by the nonlinear term $u\frac{\partial u}{\partial x}$. When computed in physical space, this product generates frequencies up to $2k_{max}$, which exceed the spectral resolution, causing the afford mentioned aliasing when transformed back to spectral space.
 
 \subsubsection{Dealiasing Strategy}
 To prevent aliasing instabilities, the standard 2/3 dealiasing rule was implemented for all grid sizes:
-
 \begin{equation}
 	k_{cutoff} = \frac{2k_{max}}{3} = \frac{N}{3}
 \end{equation}
-
 The dealiasing algorithm operates as follows:
 \begin{enumerate}
 	\item Compute nonlinear term $u\frac{\partial u}{\partial x}$ in physical space
@@ -40,24 +34,24 @@ The dealiasing algorithm operates as follows:
 \end{enumerate}
 
 \subsubsection{Impact on Results}
-The dealiasing implementation was essential for numerical stability:
+The dealiasing implementation turned out to be essential for numerical stability:
 
 \begin{itemize}
-	\item \textbf{Stability Enhancement}: Enabled stable computation up to $N = 256$, preventing the exponential error growth characteristic of aliasing instabilities
-	\item \textbf{Convergence Improvement}: Transformed initially chaotic convergence behavior into meaningful spectral convergence rates for most grid sizes
-	\item \textbf{Residual Challenges}: Despite dealiasing, certain grid sizes ($N = 64, 256$) exhibited suboptimal convergence, indicating potential resonance effects or insufficient dealiasing for these specific cases
+	\item \textbf{Stability Enhancement}: Enabled more stable computation up to $N = 256$, preventing the exponential error growth characteristic of aliasing instabilities.
+	\item \textbf{Convergence Improvement}: Transformed initially chaotic convergence behavior into more meaningful spectral convergence rates for most grid sizes
+	\item \textbf{Residual Challenges}: Despite dealiasing, certain grid sizes ($N = 64, 256$) still show suboptimal convergence, which indicates potential resonance effects or insufficient dealiasing for these specific cases.
 \end{itemize}
-
-This demonstrates that while the 2/3 rule provides a robust foundation for aliasing control in spectral methods, problem-specific tuning may be necessary for optimal performance across all grid resolutions.
+%
+This showed that while the 2/3 rule provides a robust foundation for controlling the aliasing error in spectral methods, problem-specific tuning is perhaps  necessary for optimal performance across all grid sizes.
 
 \subsection{Determining Maximum CFL Values}
 
 \subsubsection{Methodology}
-The maximum stable CFL values for the Fourier Galerkin method were determined using the same incremental testing approach as in Section 2, but adapted for the spectral formulation. The algorithm proceeds as follows:
+The maximum stable CFL values for the Fourier Galerkin method were found using a similar approach as in Part 2, by incrementally testing, but with a slightly adapted version for the spectral formulation. The algorithm proceeds as follows:
 
 \begin{enumerate}
-	\item \textbf{Incremental Testing}: For each grid size $N$, CFL values are tested incrementally starting from 3.0 with steps of 0.05, reflecting the generally higher stability limits of Galerkin methods compared to collocation.
-	\item \textbf{Stability Criterion}: A solution is considered stable if:
+	\item \textbf{Incremental Testing}: For each grid size $N$, CFL values are tested incrementally starting from 3.0 with steps of 0.05.
+	\item \textbf{Stability Criterion}: A solution is stable if:
 	      \begin{itemize}
 		      \item No NaN or infinite values occur during time integration
 		      \item The error change between consecutive CFL values satisfies: $|\text{error}_{\text{current}} - \text{error}_{\text{previous}}| < 0.25$
@@ -69,7 +63,7 @@ The maximum stable CFL values for the Fourier Galerkin method were determined us
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{media/cfl_errors_fg_complete.png}
-	\caption{L$_\infty$ error for different CFL values and grid sizes using Fourier Galerkin method. The method exhibits higher stability limits compared to Fourier Collocation, with maximum CFL values ranging from 4.15 to 8.05. The sharp error increases indicate stability boundaries, occurring at progressively smaller CFL values as grid resolution increases.}
+	\caption{L$_\infty$ error for different CFL values and grid sizes using Fourier Galerkin method. The method shows higher stability limits compared to Fourier Collocation, with maximum CFL values ranging from 4.15 to 8.05. The sharp error increases indicate stability boundaries, occurring at progressively smaller CFL values as grid sizes increases.}
 	\label{fig:cfl_fg}
 \end{figure}
 
@@ -94,18 +88,17 @@ The maximum stable CFL values for the Fourier Galerkin method were determined us
 \end{table}
 
 \subsubsection{Analysis of CFL Results}
-The Fourier Galerkin method demonstrates significantly higher maximum CFL values compared to the Fourier Collocation method, with values ranging from 4.15 to 8.05 versus 0.65 to 1.40 for collocation. This enhanced stability can be attributed to several factors:
-
+The Fourier Galerkin method has significantly higher maximum CFL values compared to the Fourier Collocation method. The values range from 4.15 to 8.05 in comparison to 0.65 to 1.40. This enhanced stability is due to several factors:
+%
 \begin{itemize}
-	\item \textbf{Spectral Space Integration}: The Galerkin method evolves Fourier coefficients directly, avoiding some of the numerical instabilities associated with point-wise evaluation in collocation methods.
-	\item \textbf{Energy Conservation}: The Galerkin formulation naturally preserves certain conservation properties of the original PDE, leading to improved stability characteristics.
-	\item \textbf{Dealiasing Benefits}: The implemented adaptive dealiasing strategy effectively removes high-frequency aliasing errors that can destabilize the solution.
+	\item \textbf{Spectral Space Integration}: The Galerkin method evolves Fourier coefficients directly, instead of point-wise evaluation in collocation methods, therefore avoiding some of the numerical instabilities associated with point-wise evaluation.
+	\item \textbf{Energy Conservation}: The Galerkin formulation preserves certain conservation properties of the original PDE, leading to improved stability characteristics.
+	\item \textbf{Dealiasing Benefits}: The implemented dealiasing removes high-frequency aliasing errors that can destabilize the solution.
 \end{itemize}
-
-The decreasing trend with increasing $N$ follows the same physical reasoning as in the collocation case, where finer grids require smaller time steps due to the increased influence of the diffusion constraint.
+%
+The trend of decreasing $N$ follows the same physical reasoning as in the collocation case, where finer grids require smaller time steps due to the increased influence of the diffusion constraint.
 
 \subsection{Convergence Study}
-
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
@@ -146,17 +139,22 @@ The decreasing trend with increasing $N$ follows the same physical reasoning as 
 \end{table}
 
 \subsubsection{Convergence Analysis}
-The Fourier Galerkin method exhibits mixed convergence behavior, showing both the promise and challenges of spectral methods for nonlinear problems:
+The Fourier Galerkin method shows a mixed results for the convergence behavior, showing both the promise and challenges of spectral methods for nonlinear problems:
 
 \begin{itemize}
-	\item \textbf{Spectral Convergence Potential}: For most grid sizes, convergence rates between 1.5-5.2 demonstrate the method's ability to achieve high-order accuracy, consistent with spectral theory for smooth periodic solutions.
-	\item \textbf{Aliasing Challenges}: The negative convergence rates at $N=64$ and $N=256$ indicate residual aliasing effects despite dealiasing efforts. This behavior is characteristic of the delicate balance required in spectral methods between resolution and stability.
-	\item \textbf{Optimal Resolution Range}: The method performs best in the intermediate range ($N=96$ to $N=192$), where the balance between resolution and aliasing control is most favorable.
-	\item \textbf{Computational Efficiency}: Despite higher computational cost per time step due to FFT operations, the larger allowable time steps often compensate, making the method competitive.
+	\item \textbf{Spectral Convergence Potential}: For most grid sizes convergence rates are between 1.5-5.2. This show this method's ability to achieve high-order accuracy.
+	\item \textbf{Aliasing Challenges}: The negative convergence rates at $N=64$ and $N=256$ indicate aliasing effects even though the dealiasing efforts. This behavior show the expected characteristic of balancing the delicate balance between resolution and stability.
+	\item \textbf{Optimal Resolution Range}: The data shows that the method performs best in the intermediate range ($N=96$ to $N=192$).
+	\item \textbf{Computational Efficiency}: Despite higher computational cost, per time step due to FFT operations, the larger stable time steps often compensate for it.
+\end{itemize}
+The Fourier Galerkin implementation demonstrates the theoretical advantages of spectral methods while highlighting the challenges of nonlinear spectral computation:
+\begin{itemize}
+	\item \textbf{Stability Achievement}: The significantly higher CFL limits validate the theoretical stability. 
+	\item \textbf{Aliasing Management}: The implemented dealiasing strategy, while not perfect, successfully prevents catastrophic aliasing failures and enables stable computation.
+	\item \textbf{Spectral Convergence}: When aliasing is properly handled, the method achieves the expected high-order convergence rates. 
+	\item \textbf{Method Validation}: The comparison with analytical solutions and the collocation method introduces confidence in the implementation's correctness. 
 \end{itemize}
 %
-The irregular convergence pattern highlights the critical importance of proper dealiasing strategies in spectral methods for nonlinear problems.
-
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.5\textwidth}
@@ -204,21 +202,11 @@ The irregular convergence pattern highlights the critical importance of proper d
 \end{table}
 
 \subsubsection{Comparative Analysis}
-The comparison between Fourier Galerkin and Fourier Collocation methods reveals distinct trade-offs:
-
+The comparison between Fourier Collocation and Fourier Galerkin methods reveals distinct trade-offs:
+%
 \begin{itemize}
-	\item \textbf{Stability Advantages}: The Galerkin method allows CFL values 6-7 times larger than collocation, potentially enabling larger time steps and improved computational efficiency.
-	\item \textbf{Accuracy Trade-offs}: For the tested cases, the collocation method achieves superior accuracy, particularly at $N=128$ where the error is approximately 50 times smaller.
-	\item \textbf{Implementation Complexity}: The Galerkin method requires more sophisticated dealiasing strategies and careful handling of the spectral-physical space transformations.
-	\item \textbf{Robustness}: The collocation method demonstrates more consistent convergence behavior, while the Galerkin method shows sensitivity to aliasing effects at certain grid sizes.
-\end{itemize}
-
-\subsubsection{Assessment of Overall Results}
-The Fourier Galerkin implementation successfully demonstrates the theoretical advantages of spectral methods while highlighting the practical challenges of nonlinear spectral computation:
-
-\begin{itemize}
-	\item \textbf{Stability Achievement}: The significantly higher CFL limits validate the theoretical stability advantages of Galerkin formulations.
-	\item \textbf{Aliasing Management}: The implemented adaptive dealiasing strategy, while not perfect, successfully prevents catastrophic aliasing failures and enables stable computation.
-	\item \textbf{Spectral Convergence}: When aliasing is properly controlled, the method achieves the expected high-order convergence rates characteristic of spectral methods.
-	\item \textbf{Method Validation}: The comparison with analytical solutions and the collocation method provides confidence in the implementation's correctness and helps quantify the method's performance characteristics.
+	\item \textbf{Stability Advantages}: The Galerkin method shows higher CFL values, which are 6-7 times larger than collocation. This potentially enables larger time steps and improved computational efficiency.
+	\item \textbf{Accuracy Trade-offs}: For the small test case, the collocation method showed better accuracy, in particularly at $N=128$.
+	\item \textbf{Implementation Complexity}: The Galerkin method implementation required dealiasing strategies and careful handling of the spectral-physical space transformations.
+	\item \textbf{Robustness}: The collocation method demonstrates for the found CFL values a more consistent convergence behavior, while the Galerkin method shows sensitivity to aliasing effects at certain grid sizes.
 \end{itemize}

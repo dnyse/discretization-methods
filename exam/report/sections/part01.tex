@@ -1,236 +1,224 @@
 \section{Advection-Diffusion Equation}\label{sec:advection_diffusion_equation}
 The advection-diffusion equation is given as
 \begin{equation}
-    \frac{\partial u(x,t)}{\partial t} + U_0(x) \frac{\partial u(x,t)}{\partial x} = \nu \frac{\partial^2 u(x,t)}{\partial x^2},
-    \label{eq:adv_diff_eq}
+	\frac{\partial u(x,t)}{\partial t} + U_0(x) \frac{\partial u(x,t)}{\partial x} = \nu \frac{\partial^2 u(x,t)}{\partial x^2},
+	\label{eq:adv_diff_eq}
 \end{equation}
 where:
 \begin{itemize}
-    \item $u(x,t)$ is the unknown function.
-    \item $U_0(x)$ is a periodic and bounded velocity field[cite: 304].
-    \item $\nu$ is a constant diffusion coefficient[cite: 304].
-    \item Both $u(x,t)$ and $U_0(x)$ are assumed to be periodic and smooth, as is the initial condition[cite: 304, 305].
+	\item $u(x,t)$ is the unknown function.
+	\item $U_0(x)$ is a periodic and bounded velocity field.
+	\item $\nu$ is a constant diffusion coefficient.
+	\item Both $u(x,t)$, $U_0(x)$ and the initial condition are assumed to be periodic and smooth.
 \end{itemize}
 
 \subsection{Sufficient Conditions for Wellposedness}\label{sub:wellposedness}
 For Equation \ref{eq:adv_diff_eq} to be wellposed, we need to establish sufficient conditions for $\nu$ and $U_0(x)$.
-The problem is considered wellposed for $t \in [0, T]$ in $L^2_w[D]$ provided that its solution $u(\cdot, t)$ satisfies
+A problem is considered to be wellposed for $t \in [0, T]$ in $L^2_w[D]$ provided that its solution $u(\cdot, t)$ satisfies
 \begin{equation}
-    \|u(\cdot, t)\|_{L_w^2[D]} \leq K e^{\alpha t}\|g\|_{L_w^2[D]},
-    \label{eq:wellposed_def}
+	\|u(\cdot, t)\|_{L_w^2[D]} \leq K e^{\alpha t}\|g\|_{L_w^2[D]},
+	\label{eq:wellposed_def}
 \end{equation}
 for some positive constants $K$ and $\alpha$, where $g$ is the initial condition. \newline
 \newline
-We establish the following sufficient conditions:
+The following sufficient conditions were established:
 \begin{enumerate}
-    \item \textbf{Positive Diffusion Coefficient} $(\nu > 0)$: This coefficient must be strictly positive. A positive $\nu$ ensures that Equation \ref{eq:adv_diff_eq} is parabolic, which is associated with smoothing properties essential for wellposedness. The diffusion term $\nu \frac{\partial^2 u}{\partial x^2}$ introduces dissipation in the energy of the system, which helps to counterbalance potential energy growth from the advection term, as will be shown in the semi-boundedness analysis.
-    \item \textbf{Bounded Derivative of} $U_0(x)$: We require $U_0(x)$ to be continuously differentiable, i.e., $U_0(x) \in C^1[0,2\pi]$, with its derivative $U_0'(x)$ being bounded, such that $\max_x|U_0'(x)| < \infty$. This condition ensures that the advection term does not introduce unbounded growth rates in the solution's energy estimate.
+	\item \textbf{Positive Diffusion Coefficient} $(\nu > 0)$: This ensures that Equation \ref{eq:adv_diff_eq} is parabolic, which is associated with smoothing properties essential for wellposedness. The diffusion term $\nu \frac{\partial^2 u}{\partial x^2}$ introduces dissipation in terms of energy of the system, which counterbalances the growth in potential energy from the advection term.
+	\item \textbf{Bounded Derivative of} $U_0(x)$: $U_0(x)$ has to be continuously differentiable, i.e., $U_0(x) \in C^1[0,2\pi]$, with its derivative $U_0'(x)$ being bounded, such that $\max_x|U_0'(x)| < \infty$. This controls  the advection term from not introducing unbounded growth rates in the solution's energy estimate.
 \end{enumerate}
 %
-To demonstrate wellposedness under these conditions, we show that the spatial operator is semi-bounded. The PDE can be written as $\frac{\partial u}{\partial t} = \mathcal{L}u$, where the spatial operator $\mathcal{L}$ is defined as:
+To show wellposedness under these conditions, we demonstrate that the operator is semi-bounded. The PDE can be written as $\frac{\partial u}{\partial t} = \mathcal{L}u$, where the spatial operator $\mathcal{L}$ is defined as:
 \begin{equation}
-    \mathcal{L} = - U_0(x) \frac{\partial}{\partial x} + \nu \frac{\partial^2}{\partial x^2}.
-    \label{eq:oper_semi_bound}
+	\mathcal{L} = - U_0(x) \frac{\partial}{\partial x} + \nu \frac{\partial^2}{\partial x^2}.
+	\label{eq:oper_semi_bound}
 \end{equation}
-To find the adjoint $\mathcal{L}^*$, we use the $L^2[0, 2\pi]$ inner product $(f,g)_{L^2} = \int_0^{2\pi} f(x) \overline{g(x)} dx$. The adjoint $\mathcal{L}^*$ is defined by $(\mathcal{L}u, v)_{L^2} = (u, \mathcal{L}^*v)_{L^2}$ for all sufficiently smooth $u,v$ satisfying periodic boundary conditions.
+The goal is to find the adjoint $\mathcal{L}^*$, we use the $L^2[0, 2\pi]$ inner product $(f,g)_{L^2} = \int_0^{2\pi} f(x) \overline{g(x)} dx$. The adjoint $\mathcal{L}^*$ is defined by $(\mathcal{L}u, v)_{L^2} = (u, \mathcal{L}^*v)_{L^2}$ for all sufficiently smooth $u,v$, that satisfy periodic boundary conditions.
 \begin{equation}
-    (\mathcal{L}u, v)_{L^2} = \int_0^{2\pi} \left( -U_0(x) \frac{\partial u}{\partial x} + \nu \frac{\partial^2 u}{\partial x^2} \right) v dx.
-    \label{eq:adjoint_l_star_integral}
+	(\mathcal{L}u, v)_{L^2} = \int_0^{2\pi} \left( -U_0(x) \frac{\partial u}{\partial x} + \nu \frac{\partial^2 u}{\partial x^2} \right) v dx.
+	\label{eq:adjoint_l_star_integral}
 \end{equation}
 Analyzing the terms individually:
 \begin{itemize}
-    \item \textbf{Advection term}: Using integration by parts:
-          \begin{equation}
-              \int_0^{2\pi} - U_0 (x) \frac{\partial u}{\partial x} v dx = \left [ -U_0(x) u v \right]_0^{2\pi} + \int_0^{2\pi} u \frac{\partial}{\partial x} \left ( U_0(x) v\right) dx.
-              \label{eq:adv_term_parts}
-          \end{equation}
-          The boundary term $\left [ -U_0(x) u v \right]_0^{2\pi}$ vanishes due to the periodicity of $U_0(x)$, $u(x,t)$, and the test function $v(x)$ over $[0, 2\pi]$. The remaining term is expanded as:
-          \begin{equation}
-              \int_0^{2\pi} u \frac{\partial}{\partial x} \left ( U_0(x) v\right) dx = \int_0^{2\pi} u \left ( U_0(x) \frac{dv}{dx} +  \frac{d U_0(x)}{d x} v \right) dx.
-              \label{eq:adv_term_expanded}
-          \end{equation}
-          So, the adjoint of $-U_0(x) \frac{\partial}{\partial x}$ is $U_0(x) \frac{\partial}{\partial x} + \frac{d U_0(x)}{dx}$.
-    \item \textbf{Diffusion term}: Applying integration by parts twice:
-          \begin{equation}
-              \begin{aligned}
-                  \int_0^{2 \pi} \nu \frac{\partial^2 u }{\partial x^2} v dx & = \underbrace{\left [ \nu \frac{\partial u}{\partial x} v \right]_0^{2\pi}}_{=0, \text{ due to periodicity}} - \int_0^{2\pi} \nu \frac{\partial u}{\partial x} \frac{\partial v}{\partial x} dx \\
-                                                                         & =  \underbrace{\left [ -\nu u \frac{\partial v}{\partial x} \right]_0^{2\pi}}_{=0, \text{ due to periodicity}} + \int_0^{2\pi} \nu u \frac{\partial^2 v}{\partial x^2} dx.
-                  \label{eq:diff_term_parts}
-              \end{aligned}
-          \end{equation}
-          Thus, the diffusion operator $\nu \frac{\partial^2}{\partial x^2}$ is self-adjoint under periodic boundary conditions.
+	\item \textbf{Advection term}: Using integration by parts:
+	      \begin{equation}
+		      \int_0^{2\pi} - U_0 (x) \frac{\partial u}{\partial x} v dx = \left [ -U_0(x) u v \right]_0^{2\pi} + \int_0^{2\pi} u \frac{\partial}{\partial x} \left ( U_0(x) v\right) dx.
+		      \label{eq:adv_term_parts}
+	      \end{equation}
+	      The boundary term $\left [ -U_0(x) u v \right]_0^{2\pi}$ vanishes due to the periodicity of $U_0(x)$, $u(x,t)$, and the test function $v(x)$ over $[0, 2\pi]$. The remaining term is expanded as:
+	      \begin{equation}
+		      \int_0^{2\pi} u \frac{\partial}{\partial x} \left ( U_0(x) v\right) dx = \int_0^{2\pi} u \left ( U_0(x) \frac{dv}{dx} +  \frac{d U_0(x)}{d x} v \right) dx.
+		      \label{eq:adv_term_expanded}
+	      \end{equation}
+	      So, the adjoint of $-U_0(x) \frac{\partial}{\partial x}$ is $U_0(x) \frac{\partial}{\partial x} + \frac{d U_0(x)}{dx}$.
+	\item \textbf{Diffusion term}: Applying integration by parts twice:
+	      \begin{equation}
+		      \begin{aligned}
+			      \int_0^{2 \pi} \nu \frac{\partial^2 u }{\partial x^2} v dx & = \underbrace{\left [ \nu \frac{\partial u}{\partial x} v \right]_0^{2\pi}}_{=0, \text{ due to periodicity}} - \int_0^{2\pi} \nu \frac{\partial u}{\partial x} \frac{\partial v}{\partial x} dx \\
+			                                                                 & =  \underbrace{\left [ -\nu u \frac{\partial v}{\partial x} \right]_0^{2\pi}}_{=0, \text{ due to periodicity}} + \int_0^{2\pi} \nu u \frac{\partial^2 v}{\partial x^2} dx.
+			      \label{eq:diff_term_parts}
+		      \end{aligned}
+	      \end{equation}
+	      Therefore, the diffusion operator $\nu \frac{\partial^2}{\partial x^2}$ is self-adjoint under periodic boundary conditions.
 \end{itemize}
-Combining these results, we have:
+Combining these results, we end up with:
 \begin{equation}
-    (\mathcal{L}u , v )_{L^2} =  \int_0^{2\pi} u \left ( U_0(x) \frac{\partial v}{\partial x} +  \frac{d U_0(x)}{d x} v  +  \nu \frac{\partial^2 v}{\partial x^2} \right) dx = (u, \mathcal{L}^* v)_{L^2}.
-    \label{eq:adj_eq_final}
+	(\mathcal{L}u , v )_{L^2} =  \int_0^{2\pi} u \left ( U_0(x) \frac{\partial v}{\partial x} +  \frac{d U_0(x)}{d x} v  +  \nu \frac{\partial^2 v}{\partial x^2} \right) dx = (u, \mathcal{L}^* v)_{L^2}.
+	\label{eq:adj_eq_final}
 \end{equation}
-Therefore, the adjoint operator is:
+Resulting in the adjoint operator being:
 \begin{equation}
-    \mathcal{L}^* = U_0(x) \frac{\partial}{\partial x} +  \frac{d U_0(x)}{d x}  +  \nu \frac{\partial^2}{\partial x^2}.
-    \label{eq:adj_op_final}
+	\mathcal{L}^* = U_0(x) \frac{\partial}{\partial x} +  \frac{d U_0(x)}{d x}  +  \nu \frac{\partial^2}{\partial x^2}.
+	\label{eq:adj_op_final}
 \end{equation}
-An operator $\mathcal{L}$ is semi-bounded if there exists a real constant $\alpha$ such that for all $u$ in the domain of $\mathcal{L}$:
+The semi-bounded theorem says that an operator $\mathcal{L}$ is semi-bounded if there exists a real constant $\alpha$ such that for all $u$ in the domain of $\mathcal{L}$:
 \begin{equation}
-    \left(u,\left(\mathcal{L}+\mathcal{L}^*\right) u\right)_{L^2} \leq \alpha\|u\|_{L^2}^2 \quad \text{or equivalently } \text{Re}(\mathcal{L}u, u)_{L^2} \leq \frac{\alpha}{2} \|u\|_{L^2}^2 \text{}.
-    \label{eq:semi_bounded_def}
+	\left(u,\left(\mathcal{L}+\mathcal{L}^*\right) u\right)_{L^2} \leq \alpha\|u\|_{L^2}^2 \quad \text{or equivalently } \text{Re}(\mathcal{L}u, u)_{L^2} \leq \frac{\alpha}{2} \|u\|_{L^2}^2 \text{}.
+	\label{eq:semi_bounded_def}
 \end{equation}
 First, we compute $\mathcal{L} + \mathcal{L}^*$:
 \begin{equation}
-    \mathcal{L} + \mathcal{L}^* = \left (  - U_0(x) \frac{\partial}{\partial x} + \nu \frac{\partial^2}{\partial x^2} \right) + \left  (U_0(x) \frac{\partial}{\partial x} +  \frac{d U_0(x)}{d x}  +  \nu \frac{\partial^2}{\partial x^2} \right ) = \frac{d U_0(x)}{d x}  +  2\nu \frac{\partial^2}{\partial x^2}.
-    \label{eq:L_plus_L_star}
+	\mathcal{L} + \mathcal{L}^* = \left (  - U_0(x) \frac{\partial}{\partial x} + \nu \frac{\partial^2}{\partial x^2} \right) + \left  (U_0(x) \frac{\partial}{\partial x} +  \frac{d U_0(x)}{d x}  +  \nu \frac{\partial^2}{\partial x^2} \right ) = \frac{d U_0(x)}{d x}  +  2\nu \frac{\partial^2}{\partial x^2}.
+	\label{eq:L_plus_L_star}
 \end{equation}
-Using this result, we compute the inner product:
+Using this result, we can compute the inner product as follows:
 \begin{equation}
-    \begin{aligned}
-        (u, (\mathcal{L}+\mathcal{L}^*)u)_{L^2} & = \int_0^{2\pi} u\left(\frac{dU_0(x)}{dx}u + 2\nu\frac{\partial^2 u}{\partial x^2}\right) dx  \\
-                                               & = \int_0^{2\pi} \frac{dU_0(x)}{dx}u^2 dx + 2\nu\int_0^{2\pi} u\frac{\partial^2 u}{\partial x^2} dx.
-    \end{aligned}
-    \label{eq:uLLu_expanded}
+	\begin{aligned}
+		(u, (\mathcal{L}+\mathcal{L}^*)u)_{L^2} & = \int_0^{2\pi} u\left(\frac{dU_0(x)}{dx}u + 2\nu\frac{\partial^2 u}{\partial x^2}\right) dx        \\
+		                                        & = \int_0^{2\pi} \frac{dU_0(x)}{dx}u^2 dx + 2\nu\int_0^{2\pi} u\frac{\partial^2 u}{\partial x^2} dx.
+	\end{aligned}
+	\label{eq:uLLu_expanded}
 \end{equation}
 For the second term, integration by parts (and using periodicity of $u$ and its derivatives) yields, for $\nu > 0$:
 \begin{equation}
-    2 \nu \int_0^{2 \pi} u \frac{\partial^2 u}{\partial x^2} dx = \underbrace{2\nu \left[u \frac{\partial u}{\partial x}\right]_0^{2\pi}}_{=0} - 2 \nu \int_0^{2 \pi} \left (\frac{\partial u}{\partial x} \right )^2 dx  \leq 0.
-    \label{eq:diff_term_energy}
+	2 \nu \int_0^{2 \pi} u \frac{\partial^2 u}{\partial x^2} dx = \underbrace{2\nu \left[u \frac{\partial u}{\partial x}\right]_0^{2\pi}}_{=0} - 2 \nu \int_0^{2 \pi} \left (\frac{\partial u}{\partial x} \right )^2 dx  \leq 0.
+	\label{eq:diff_term_energy}
 \end{equation}
-This non-positive contribution from the diffusion term is key for stability if $U_0'(x)$ can be negative. This leads to:
+This leads to:
 \begin{equation}
-    (u, (\mathcal{L}+\mathcal{L}^*)u)_{L^2} \leq \int_0^{2\pi} \frac{dU_0(x)}{dx}u^2 dx \leq  \max_x\left|\frac{dU_0(x)}{dx}\right| \int_0^{2\pi} u^2 dx = \max_x\left|\frac{dU_0(x)}{dx}\right| \|u\|^2_{L^2}.
-    \label{eq:wellposed_cond_deriv}
+	(u, (\mathcal{L}+\mathcal{L}^*)u)_{L^2} \leq \int_0^{2\pi} \frac{dU_0(x)}{dx}u^2 dx \leq  \max_x\left|\frac{dU_0(x)}{dx}\right| \int_0^{2\pi} u^2 dx = \max_x\left|\frac{dU_0(x)}{dx}\right| \|u\|^2_{L^2}.
+	\label{eq:wellposed_cond_deriv}
 \end{equation}
-Thus, the condition for semi-boundedness (\ref{eq:semi_bounded_def}) is satisfied with
+Hence, the condition for semi-boundedness (\ref{eq:semi_bounded_def}) is satisfied with
 \begin{equation}
-    \alpha = \max_x\left|\frac{dU_0(x)}{dx}\right|.
-    \label{eq:alpha_val}
+	\alpha = \max_x\left|\frac{dU_0(x)}{dx}\right|.
+	\label{eq:alpha_val}
 \end{equation}
 This is satisfied if $U_0(x)$ has a bounded derivative, as per our condition 2.
-According to the theorem relating semi-boundedness to wellposedness (e.g., HGG p.52, for Gale, if operator $\mathcal{L}$ is semi-bounded, then the Initial Boundary Value Problem (IBVP) is wellposed in an energy sense, yielding:
+According to the theorem relating, if operator $\mathcal{L}$ is semi-bounded, then the Initial Boundary Value Problem (IBVP) is wellposed in an energy sense, yielding:
 \begin{equation}
-    \frac{d}{d t}\|u\|_{L^2}^2 \leq \alpha\|u\|_{L^2}^2 \Rightarrow\|u(t)\|_{L^2}^2 \leq e^{\alpha t}\|u(0)\|_{L^2}^2.
-    \label{eq:wellposed_result}
+	\frac{d}{d t}\|u\|_{L^2}^2 \leq \alpha\|u\|_{L^2}^2 \Rightarrow\|u(t)\|_{L^2}^2 \leq e^{\alpha t}\|u(0)\|_{L^2}^2.
+	\label{eq:wellposed_result}
 \end{equation}
-
-\textbf{Summary of Sufficient Conditions}: The problem is wellposed if:
-\begin{itemize}
-    \item $\nu > 0$ (strictly positive diffusion coefficient).
-    \item $U_0(x) \in C^1[0,2\pi]$ with its derivative $\frac{dU_0(x)}{dx}$ bounded.
-\end{itemize}
 % subsection Wellposedness (end)
 
 \subsection{Consistency and Convergence Rate of Fourier Collocation Approximation}\label{sub:consistency_and_convergence_rate_of_fourier_collocation_approximation}
 
-The Fourier Collocation method approximates the solution $u(x,t)$ using a truncated Fourier series:
+The Fourier Collocation method does approximate the solution $u(x,t)$ with a truncated Fourier series, which is given as follows:
 \begin{equation}
-u_N(x,t) = \sum_{k=-N/2}^{N/2} \tilde{u}_k(t) e^{ikx},
-\label{eq:fourier_approx}
+	u_N(x,t) = \sum_{k=-N/2}^{N/2} \tilde{u}_k(t) e^{ikx},
+	\label{eq:fourier_approx}
 \end{equation}
-where the coefficients $\tilde{u}_k(t)$ are determined by satisfying the PDE at a set of collocation points $x_j$.
+where the $\tilde{u}_k(t)$ are determined by satisfying the PDE at the collocation points $x_j$.
 
 \subsubsection{Consistency Analysis}
-An approximation is consistent if the truncation error tends to zero as $N \rightarrow \infty$. More formally, for the scheme $\frac{\partial u_N}{\partial t} = \mathcal{L}_N u_N = P_N \mathcal{L} P_N u_N$, consistency requires:
+An approximation is consistent if the truncation error tends to zero as $N \rightarrow \infty$. More formally, for $\frac{\partial u_N}{\partial t} = \mathcal{L}_N u_N = P_N \mathcal{L} P_N u_N$, consistency is given by:
 \begin{equation}
-\|P_N \mathcal{L}(I - P_N)u\|_{L^2} \rightarrow 0 \text{ as } N \rightarrow \infty,
-\label{eq:consistency_cond1}
+	\|P_N \mathcal{L}(I - P_N)u\|_{L^2} \rightarrow 0 \text{ as } N \rightarrow \infty,
+	\label{eq:consistency_cond1}
 \end{equation}
-and that the approximation of the initial condition is also consistent:
+and for the initial condition:
 \begin{equation}
-\|P_N u(0) - u_N(0)\|_{L^2} \rightarrow 0 \text{ as } N \rightarrow \infty,
-\label{eq:consistency_cond2}
+	\|P_N u(0) - u_N(0)\|_{L^2} \rightarrow 0 \text{ as } N \rightarrow \infty,
+	\label{eq:consistency_cond2}
 \end{equation}
-where $u$ is the exact solution and $P_N$ is the projection operator onto the space of trigonometric polynomials of degree up to $N/2$.
-For the advection-diffusion equation, the operator is $\mathcal{L} = -U_0(x)\frac{\partial}{\partial x} + \nu\frac{\partial^2}{\partial x^2}$.
+here $u$ is the exact solution and $P_N$ is the projection operator.
+For the advection-diffusion equation, the operator is $\mathcal{L} = -U_0(x)\frac{\partial}{\partial x} + \nu\frac{\partial^2}{\partial x^2}$ and from our analysis we can derive the following properties:
 \begin{enumerate}
-    \item \textbf{Smoothness and Periodicity}: Given that $u(x,t)$ and $U_0(x)$ are smooth ($C^\infty$) and periodic, their product $U_0(x)u(x,t)$ is also $C^\infty$ and periodic. Derivatives of $C^\infty$ periodic functions, such as $\frac{\partial u}{\partial x}$ and $\frac{\partial^2 u}{\partial x^2}$, are also $C^\infty$ and periodic.
-    \item \textbf{Fourier Coefficient Decay}: For a $C^\infty$ periodic function $f(x)$, its Fourier coefficients $\hat{f}_k$ decay faster than any algebraic power of $|k|$ (i.e., $|\hat{f}_k| = o(|k|^{-m})$ for all $m > 0$), which is often referred to as spectral or exponential decay. Thus, the Fourier coefficients of $U_0(x)\frac{\partial u}{\partial x}$ and $\nu\frac{\partial^2 u}{\partial x^2}$ exhibit such rapid decay.
-    \item \textbf{Truncation Error Term $(I-P_N)u$}: The error in approximating a $C^\infty$ periodic function $u$ by its truncated Fourier series $P_N u$, which is $u - P_N u = (I-P_N)u$, also decays spectrally in appropriate norms. For instance, $||u - P_N u||_{L^2}$ decays spectrally.
-    \item \textbf{Action of $\mathcal{L}$ on $(I-P_N)u$}: Since $(I-P_N)u$ is a sum of high-frequency modes and decays rapidly, applying the differential operator $\mathcal{L}$ (which involves derivatives and multiplication by a smooth function $U_0(x)$) to $(I-P_N)u$ will result in a function whose Fourier coefficients also decay rapidly. While differentiation amplifies higher frequencies (multiplying coefficients by $ik$ or $(ik)^2$), if the original decay is sufficiently fast (e.g., exponential), the result $\mathcal{L}(I-P_N)u$ will still tend to zero rapidly as $N \rightarrow \infty$.
-    \item \textbf{Projection $P_N$}: Applying the projector $P_N$ to $\mathcal{L}(I-P_N)u$ does not alter its convergence to zero.
+	\item \textbf{Smoothness and Periodicity}: Given that $u(x,t)$ and $U_0(x)$ are smooth ($C^\infty$) and periodic, their product $U_0(x)u(x,t)$ is also $C^\infty$ and periodic. Moreover, derivatives of $C^\infty$ periodic functions, including $\frac{\partial u}{\partial x}$ and $\frac{\partial^2 u}{\partial x^2}$.
+	\item \textbf{Fourier Coefficient Decay}: For a $C^\infty$ periodic function $f(x)$, the corresponding Fourier coefficients $\hat{f}_k$ decay faster than any algebraic power of $|k|$, in our case we have $|\hat{f}_k| = o(|k|^{-m})$ for all $m > 0$. This is often referred to as spectral or exponential decay. Therefore, the Fourier coefficients of $U_0(x)\frac{\partial u}{\partial x}$ and $\nu\frac{\partial^2 u}{\partial x^2}$ have such a spectral decay.
+	\item \textbf{Truncation Error Term $(I-P_N)u$}: The error in approximating a $C^\infty$ periodic function $u$ using a truncated Fourier series $P_N u$, which is $u - P_N u = (I-P_N)u$, also exhibits spectral decay, when using the appropriate norms. For example, $||u - P_N u||_{L^2}$ decays spectrally.
+	\item \textbf{Action of $\mathcal{L}$ on $(I-P_N)u$}: Since $(I-P_N)u$ is a sum of high-frequency modes and decays spectrally, if we apply the differential operator $\mathcal{L}$ this will result in a function whose Fourier coefficients also decay spectrally. While differentiation amplifies higher frequencies, if the original decay is sufficiently fast (e.g., exponential), the result $\mathcal{L}(I-P_N)u$ will still tend to zero as $N \rightarrow \infty$.
+	\item \textbf{Projection $P_N$}: Applying the projector $P_N$ to $\mathcal{L}(I-P_N)u$ does not change the convergence to zero.
 \end{enumerate}
-Therefore, the condition $\|P_N \mathcal{L}(I - P_N)u\|_{L^2} \rightarrow 0$ as $N \rightarrow \infty$ is satisfied. Assuming the initial condition $u_N(0)$ is chosen as $P_N u(x,0)$, the second condition for consistency is also met. Thus, the Fourier Collocation method is consistent for this problem under the given smoothness assumptions.
+Therefore, the condition $\|P_N \mathcal{L}(I - P_N)u\|_{L^2} \rightarrow 0$ as $N \rightarrow \infty$ is satisfied, assuming the initial condition $u_N(0)$ is chosen as $P_N u(x,0)$, then the second condition for consistency is also met.
 
 \subsubsection{Expected Convergence Rate}
-The convergence rate of the Fourier Collocation method is determined by how well the truncated Fourier series can approximate the true solution. Given the smoothness and periodicity assumptions from the problem statement:
-
-\textbf{For infinitely smooth ($C^\infty$) periodic functions}:
-\begin{itemize}
-    \item The Fourier coefficients $\hat{u}_n$ of $u(x,t)$ decay faster than any polynomial power of $|n|$, often exponentially, e.g., $|\hat{u}_n| \sim e^{-\alpha|n|}$ for some $\alpha > 0$.
-    \item This rapid decay leads to \textbf{spectral convergence} (often exponential convergence) for the approximation error. For the $L^2$ norm, $||u - u_N||_{L^2} \sim e^{-\beta N}$ for some $\beta > 0$.
-    \item This means the error decreases faster than any fixed polynomial rate $N^{-p}$ as $N$ increases.
-\end{itemize}
-
-\textbf{For functions with limited regularity} (e.g., $u \in C^m[0,2\pi]$ and all derivatives up to $m-1$ are periodic):
-\begin{itemize}
-    \item The Fourier coefficients satisfy $|\hat{u}_n| \sim O(|n|^{-m})$ for large $|n|$.
-    \item This leads to an \textbf{algebraic convergence rate} for the approximation error, typically $||u - u_N||_{L^2} \sim O(N^{-m})$.
-    \item This is still significantly faster than typical low-order finite difference methods, which might achieve $O(N^{-p})$ where $p$ is a small integer (e.g., 2 or 4).
-\end{itemize}
+The convergence rate of the Fourier Collocation method depends on how well the truncated Fourier series can approximate the exact solution.
+On one hand for infinitely smooth ($C^\infty$) periodic functions the Fourier coefficients $\hat{u}_n$ of $u(x,t)$ decay faster than any polynomial power of $|n|$, as an example  $|\hat{u}_n| \sim e^{-\alpha|n|}$ for some $\alpha > 0$. This decay results in \textbf{spectral convergence} for the approximation error. In our case in the $L^2$ norm, $||u - u_N||_{L^2} \sim e^{-\beta N}$ for some $\beta > 0$. Therefore the error decreases faster than any fixed polynomial rate $N^{-p}$ as $N$ increases.\newline
+\newline
+On the other hand for functions with limited regularity such as $u \in C^m[0,2\pi]$, where all derivatives up to $m-1$ are periodic. The Fourier coefficients satisfy $|\hat{u}_n| \sim O(|n|^{-m})$ for large $|n|$, which leads  to an algebraic convergence rate for the approximation error
+\begin{equation}
+	||u - u_N||_{L^2} \sim O(N^{-m}).
+	\label{eq:mmm}
+\end{equation}
+%
+In comparison typical low-order finite difference methods, which might achieve $O(N^{-p})$, where  $p$ is a small integer (e.g., 2 or 4).
 
 
 % subsection Consistency and Convergence Rate of Fourier Collocation Approximation (end)
 
 \subsection{Stability of Fourier Collocation for Constant $U_0$}\label{sub:stability_constant_u0}
 
-When $U_0(x) = U_0$ (a constant), the advection-diffusion equation (\ref{eq:adv_diff_eq}) simplifies to:
+When $U_0(x) = U_0$ is constant, the advection-diffusion equation (\ref{eq:adv_diff_eq}) simplifies to:
 \begin{equation}
-\frac{\partial u}{\partial t} + U_0 \frac{\partial u}{\partial x} = \nu \frac{\partial^2 u}{\partial x^2}.
-\label{eq:adv_diff_const_U0}
+	\frac{\partial u}{\partial t} + U_0 \frac{\partial u}{\partial x} = \nu \frac{\partial^2 u}{\partial x^2}.
+	\label{eq:adv_diff_const_U0}
 \end{equation}
-We aim to prove the stability of the semi-discrete approximation obtained using the Fourier Collocation method with an odd number of modes ($N+1$ grid points, where $N$ is even).
+The goal is to prove the stability of the semi-discrete approximation obtained using the Fourier Collocation method with an odd number of grid points.
 
 \subsubsection{Semi-discrete Formulation}
-The semi-discrete system, obtained by applying Fourier collocation in space, can be written in vector form as:
+The semi-discrete system, which is obtained by applying Fourier collocation in space, can be written as:
 \begin{equation}
-\frac{d\mathbf{u}}{dt} = -U_0 \tilde{D} \mathbf{u} + \nu \tilde{D}^{(2)} \mathbf{u},
-\label{eq:semidiscrete_const_U0}
+	\frac{d\mathbf{u}}{dt} = -U_0 \tilde{D} \mathbf{u} + \nu \tilde{D}^{(2)} \mathbf{u},
+	\label{eq:semidiscrete_const_U0}
 \end{equation}
 where:
 \begin{itemize}
-    \item $\mathbf{u}(t) = [u(x_0,t), u(x_1,t), \ldots, u(x_N,t)]^T$ is the vector of solution values at the $N+1$ collocation points $x_j = \frac{2\pi j}{N+1}$ for $j=0, \dots, N$.
-    \item $\tilde{D}$ is the $(N+1) \times (N+1)$ first-order Fourier collocation differentiation matrix. For the odd number of points, this matrix is real and skew-symmetric, i.e., $\tilde{D}^T = -\tilde{D}$.
-    \item $\tilde{D}^{(2)}$ is the second-order Fourier collocation differentiation matrix. For the odd method, $\tilde{D}^{(2)} = \tilde{D}^2$. Since $\tilde{D}$ is skew-symmetric, $\tilde{D}^2 = \tilde{D}(-\tilde{D}^T) = -\tilde{D}\tilde{D}^T$, which is a symmetric and negative semi-definite matrix.
+	\item $\mathbf{u}(t) = [u(x_0,t), \ldots, u(x_N,t)]^T$ is the vector of solution values at the $N+1$ collocation points $x_j = \frac{2\pi j}{N+1}$ for $j=0, \dots, N$.
+	\item $\tilde{D}$ is the $(N+1) \times (N+1)$ first-order Fourier differentiation matrix. For and odd number of points, this matrix is real and has the following property $\tilde{D}^T = -\tilde{D}$.
+	\item $\tilde{D}^{(2)}$ is the second-order Fourier differentiation matrix. For the odd method, $\tilde{D}^{(2)} = \tilde{D}^2$ and $\tilde{D}^2 = \tilde{D}(-\tilde{D}^T) = -\tilde{D}\tilde{D}^T$, which is a symmetric and negative semi-definite matrix.
 \end{itemize}
 
 \subsubsection{Energy Method Proof}
-We define the discrete energy (squared $L^2$-norm analogue) as:
+We define the discrete energy as:
 \begin{equation}
-E(t) = \frac{1}{N+1} \sum_{j=0}^{N} |u_j(t)|^2 = \frac{1}{N+1} \mathbf{u}(t)^T \mathbf{u}(t),
-\label{eq:discrete_energy}
+	E(t) = \frac{1}{N+1} \sum_{j=0}^{N} |u_j(t)|^2 = \frac{1}{N+1} \mathbf{u}(t)^T \mathbf{u}(t),
+	\label{eq:discrete_energy}
 \end{equation}
-assuming $u_j(t)$ are real, which is consistent with $u(x,t)$ being a real-valued solution.
-Taking the time derivative of $E(t)$:
+assuming $u_j(t)$ are real, because $u(x,t)$ is a real-valued solution.
+Taking the time derivative of the energy yields:
 \begin{equation}
-\frac{dE}{dt} = \frac{1}{N+1} \left( \frac{d\mathbf{u}^T}{dt}\mathbf{u} + \mathbf{u}^T\frac{d\mathbf{u}}{dt} \right) = \frac{2}{N+1} \mathbf{u}^T \frac{d\mathbf{u}}{dt}
-\label{eq:dEdt_general}
+	\frac{dE}{dt} = \frac{1}{N+1} \left( \frac{d\mathbf{u}^T}{dt}\mathbf{u} + \mathbf{u}^T\frac{d\mathbf{u}}{dt} \right) = \frac{2}{N+1} \mathbf{u}^T \frac{d\mathbf{u}}{dt}
+	\label{eq:dEdt_general}
 \end{equation}
-(since $\mathbf{u}^T \frac{d\mathbf{u}}{dt}$ is a scalar, it equals $\text{Re}(\mathbf{u}^T \frac{d\mathbf{u}}{dt})$).
 Substituting the semi-discrete equation (\ref{eq:semidiscrete_const_U0}):
 \begin{equation}
-\begin{aligned}
-\frac{dE}{dt} &= \frac{2}{N+1} \mathbf{u}^T (-U_0 \tilde{D} \mathbf{u} + \nu \tilde{D}^{(2)} \mathbf{u}) \\
-&= -\frac{2U_0}{N+1} (\mathbf{u}^T \tilde{D} \mathbf{u}) + \frac{2\nu}{N+1} (\mathbf{u}^T \tilde{D}^{(2)} \mathbf{u}).
-\end{aligned}
-\label{eq:dEdt_substituted}
+	\begin{aligned}
+		\frac{dE}{dt} & = \frac{2}{N+1} \mathbf{u}^T (-U_0 \tilde{D} \mathbf{u} + \nu \tilde{D}^{(2)} \mathbf{u})                             \\
+		              & = -\frac{2U_0}{N+1} (\mathbf{u}^T \tilde{D} \mathbf{u}) + \frac{2\nu}{N+1} (\mathbf{u}^T \tilde{D}^{(2)} \mathbf{u}).
+	\end{aligned}
+	\label{eq:dEdt_substituted}
 \end{equation}
-We analyze each term:
+Analyze each term shows:
 \begin{enumerate}
-    \item \textbf{Advection term}: $\mathbf{u}^T \tilde{D} \mathbf{u}$. Since $\tilde{D}$ is skew-symmetric ($\tilde{D}^T = -\tilde{D}$) and $\mathbf{u}$ is real:
-        \begin{equation}
-        \mathbf{u}^T \tilde{D} \mathbf{u} = (\mathbf{u}^T \tilde{D} \mathbf{u})^T = \mathbf{u}^T \tilde{D}^T \mathbf{u} = \mathbf{u}^T (-\tilde{D}) \mathbf{u} = -\mathbf{u}^T \tilde{D} \mathbf{u}.
-        \end{equation}
-        This implies $2 \mathbf{u}^T \tilde{D} \mathbf{u} = 0$, so $\mathbf{u}^T \tilde{D} \mathbf{u} = 0$. Thus, the advection term contributes nothing to the energy growth.
-    \item \textbf{Diffusion term}: $\mathbf{u}^T \tilde{D}^{(2)} \mathbf{u}$. For the odd method, $\tilde{D}^{(2)} = \tilde{D}^2$. Since $\tilde{D}$ is real and skew-symmetric:
-        \begin{equation}
-        \mathbf{u}^T \tilde{D}^2 \mathbf{u} = \mathbf{u}^T \tilde{D} (-\tilde{D}^T) \mathbf{u} = - (\tilde{D}^T\mathbf{u})^T (\tilde{D}^T\mathbf{u}) = -\|\tilde{D}^T\mathbf{u}\|_2^2.
-        \end{equation}
-        Since $||\tilde{D}^T\mathbf{u}||_2^2 = ||-\tilde{D}\mathbf{u}||_2^2 = ||\tilde{D}\mathbf{u}||_2^2 \ge 0$, we have $\mathbf{u}^T \tilde{D}^2 \mathbf{u} = -\|\tilde{D}\mathbf{u}\|_2^2 \leq 0$.
+	\item \textbf{Advection term}: $\mathbf{u}^T \tilde{D} \mathbf{u}$. Since $\tilde{D}$ is skew-symmetric ($\tilde{D}^T = -\tilde{D}$) and $\mathbf{u}$ is real:
+	      \begin{equation}
+		      \mathbf{u}^T \tilde{D} \mathbf{u} = (\mathbf{u}^T \tilde{D} \mathbf{u})^T = \mathbf{u}^T \tilde{D}^T \mathbf{u} = \mathbf{u}^T (-\tilde{D}) \mathbf{u} = -\mathbf{u}^T \tilde{D} \mathbf{u}.
+	      \end{equation}
+	      This results in $2 \mathbf{u}^T \tilde{D} \mathbf{u} = 0$, therefore $\mathbf{u}^T \tilde{D} \mathbf{u} = 0$. Hence, the advection term contributes nothing to the energy growth.
+	\item \textbf{Diffusion term}: $\mathbf{u}^T \tilde{D}^{(2)} \mathbf{u}$. For the odd method, $\tilde{D}^{(2)} = \tilde{D}^2$ and $\tilde{D}$ is real and skew-symmetric:
+	      \begin{equation}
+		      \mathbf{u}^T \tilde{D}^2 \mathbf{u} = \mathbf{u}^T \tilde{D} (-\tilde{D}^T) \mathbf{u} = - (\tilde{D}^T\mathbf{u})^T (\tilde{D}^T\mathbf{u}) = -\|\tilde{D}^T\mathbf{u}\|_2^2.
+	      \end{equation}
+	      Because $||\tilde{D}^T\mathbf{u}||_2^2 = ||-\tilde{D}\mathbf{u}||_2^2 = ||\tilde{D}\mathbf{u}||_2^2 \ge 0$, we endup with $\mathbf{u}^T \tilde{D}^2 \mathbf{u} = -\|\tilde{D}\mathbf{u}\|_2^2 \leq 0$.
 \end{enumerate}
-Therefore, Equation \ref{eq:dEdt_substituted} becomes:
+If we use our findings the Equation \ref{eq:dEdt_substituted} becomes:
 \begin{equation}
-\frac{dE}{dt} = \frac{2\nu}{N+1} (-||\tilde{D}\mathbf{u}\|_2^2) \leq 0,
-\label{eq:dEdt_final}
+	\frac{dE}{dt} = \frac{2\nu}{N+1} (-||\tilde{D}\mathbf{u}\|_2^2) \leq 0,
+	\label{eq:dEdt_final}
 \end{equation}
-since $\nu > 0$ (a sufficient condition for wellposedness derived earlier).
-This proves that the discrete energy $E(t)$ is non-increasing ($E(t) \le E(0)$), establishing the \textbf{unconditional stability} of the semi-discrete Fourier Collocation approximation in the discrete $L^2$-norm analogue.
+since $\nu > 0$ as shown earlier.
+This proves that the discrete energy $E(t)$ is non-increasing ($E(t) \le E(0)$), showing the unconditional stability of the semi-discrete Fourier Collocation approximation in the discrete $L^2$-norm.
 
 % \subsubsection{Alternative Proof via Fourier Analysis}
 % Let $u_N(x,t) = \sum_{n=-N/2}^{N/2} \hat{u}_n(t) e^{inx}$ be the Fourier series representation of the solution (here, $\hat{u}_n$ denote the time-dependent Fourier coefficients, equivalent to $\tilde{u}_n$ used earlier).

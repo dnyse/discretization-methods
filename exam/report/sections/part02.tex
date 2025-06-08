@@ -22,8 +22,7 @@ The time step was determined according to the following CFL condition
 \subsection{Determining Maximum CFL Values}
 
 \subsubsection{Methodology}
-The maximum stable CFL values were determined through an incremental testing approach that systematically explores the stability boundary for each grid size. The algorithm proceeds as follows:
-
+The maximum CFL values, which were stable (The interpretation of what is stable in my case see below) were determined by an incremental testing approach that explores the stability boundary for each grid size. The algorithm proceeds as follows:
 \begin{enumerate}
 	\item \textbf{Incremental Testing}: For each grid size $N$, CFL values are tested incrementally starting from 0.05 with steps of 0.05
 	\item \textbf{Stability Criterion}: A solution is considered stable if:
@@ -31,17 +30,16 @@ The maximum stable CFL values were determined through an incremental testing app
 		      \item No NaN or infinite values occur during time integration
 		      \item The error change between consecutive CFL values satisfies: $|\text{error}_{\text{current}} - \text{error}_{\text{previous}}| < 0.25$
 	      \end{itemize}
-	\item \textbf{Termination}: Testing stops when the stability criterion is violated, indicating the onset of numerical instability
-	\item \textbf{Safety Selection}: The last stable CFL value is selected as the maximum for practical use
+	\item \textbf{Termination}: Testing stops when the stability criterion is violated.
+	\item \textbf{Safety Selection}: The last stable CFL value is selected as the maximum.
 \end{enumerate}
-
-This methodology is theoretically sound as it detects the transition from stable to unstable numerical behavior through the characteristic sharp increase in $L_\infty$ error that occurs at the stability boundary.
-
+%
+This methodology is based on the results than can be seen in Figure~\ref{fig:error_fc}.It detects the transition from stable to unstable numerical behavior through the characteristic sharp increase in $L_\infty$ error.
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.5\textwidth]{media/cfl_errors.png}
 	\end{center}
-	\caption{$L_{\infty}$ error for different CFL values and grid sizes. The sharp spikes in error indicate the onset of numerical instability, which occurs at progressively smaller CFL values as the grid is refined. This behavior correctly identifies the stability limits for each grid resolution.}\label{fig:error_fc}
+	\caption{$L_{\infty}$ error for different CFL values and grid sizes. The sharp spikes in error indicate the onset of numerical instability, which occurs at progressively smaller CFL values as the grid is refined. This behavior identifies the stability limits for each grid resolution.}\label{fig:error_fc}
 \end{figure}
 
 \begin{table}[H]
@@ -65,15 +63,15 @@ This methodology is theoretically sound as it detects the transition from stable
 \end{table}
 
 \subsubsection{Analysis of CFL Results}
-The maximum CFL values exhibit a clear decreasing trend with increasing grid resolution, which is both expected and theoretically correct. This behavior can be explained through the CFL stability condition:
-
+The maximum CFL values show a clear trend, where they decrease with increasing grid resolution, which is to be expected and be explained through the following CFL stability condition:
+%
 \begin{itemize}
 	\item \textbf{Grid Refinement Effect}: As $N$ increases, $\Delta x = \frac{2\pi}{N+1}$ decreases proportionally
 	\item \textbf{Diffusion Dominance}: For fine grids, the diffusion constraint $\frac{\nu}{(\Delta x)^2}$ becomes dominant, scaling as $\frac{1}{(\Delta x)^2}$
-	\item \textbf{Stability Restriction}: This quadratic dependence on grid spacing makes the time step constraint increasingly restrictive for finer grids
+	\item \textbf{Stability Restriction}: This quadratic dependence on the grid spacing results in the time step constraint increasingly restrictive for finer grids.
 \end{itemize}
-
-The observed CFL values are higher than the typical limit of $\approx 0.5$ for pure diffusion problems because Burgers' equation combines both advection and diffusion effects, with the advection term allowing for larger stable time steps, particularly on coarser grids.
+%
+The observed CFL values are higher than the usual limit seen for pure diffusion problems. This is because Burgers' equation combines both advection and diffusion effects, with the advection term allowing for larger stable time steps, especially on coarser grids.
 
 \subsection{Convergence Study}
 \begin{table}[H]
@@ -116,17 +114,15 @@ The observed CFL values are higher than the typical limit of $\approx 0.5$ for p
 \end{table}
 
 \subsubsection{Convergence Analysis}
-The convergence study reveals \textbf{spectral convergence}, which is the hallmark of Fourier spectral methods applied to smooth, periodic functions:
-
+The convergence study shows spectral convergence, which is the expected results for Fourier spectral methods applied to smooth, periodic functions:
+%
 \begin{itemize}
-	\item \textbf{High-Order Rates}: Convergence rates consistently exceed 2, with many values between 6-8, indicating convergence faster than any fixed polynomial order
-	\item \textbf{Spectral Theory}: For $C^\infty$ periodic functions, Fourier coefficients decay exponentially as $|\hat{u}_n| \sim e^{-\alpha|n|}$, leading to spectral convergence
-	\item \textbf{Rate Variability}: The variation in convergence rates (rather than a constant algebraic rate) is characteristic of the transition between different accuracy regimes in spectral methods
-	\item \textbf{Physical Validation}: The high convergence rates confirm that the Burgers' solution remains smooth and well-resolved at $t = \pi/4$
+	\item \textbf{High-Order Rates}: Convergence rates usually exceed 2, with most values ranging from 6 to 8, showing higher convergence rate than any fixed polynomial order
+	\item \textbf{Rate Variability}: The variation in convergence rates is characteristic of the transition between different accuracy regimes in spectral methods.
+	\item \textbf{Physical Validation}: The high convergence rates show that the Burgers' solution remains smooth and well-resolved at $t = \pi/4$
 \end{itemize}
-
-This behavior demonstrates that the Fourier Collocation method is exploiting the full smoothness of the solution, achieving the optimal convergence rate possible for this class of problems.
-
+%
+The observed behavior clearly demonstrates that the Fourier Collocation method is exploiting the smoothness of the solution.
 \subsection{Time Evolution Study}
 \begin{table}[H]
 	\centering
@@ -145,18 +141,25 @@ This behavior demonstrates that the Fourier Collocation method is exploiting the
 \end{table}
 
 \subsubsection{Error Evolution Analysis}
-The time evolution study reveals a counterintuitive but physically correct phenomenon: \textbf{the numerical error decreases over time} from $t = \pi/8$ to $t = \pi/4$. This behavior can be explained through the physics of the viscous Burgers' equation:
+The time evolution study reveals a counter-intuitive but physically correct phenomenon, namely the numerical error decreases over time from $t = \pi/8$ to $t = \pi/4$. This behavior can be explained through the physics of the viscous Burgers' equation:
 
 \begin{itemize}
 	\item \textbf{Viscous Smoothing}: The diffusion term $\nu\frac{\partial^2 u}{\partial x^2}$ acts as a smoothing mechanism, gradually reducing sharp gradients in the solution
-	\item \textbf{Initial Complexity}: Early in the evolution ($t = \pi/8$), the solution may contain steeper gradients or transitional features that are more challenging to resolve numerically
-	\item \textbf{Fourier Advantage}: As the solution becomes smoother due to viscous effects, it is better represented by the truncated Fourier series, leading to reduced approximation errors
-	\item \textbf{Convergence to Equilibrium}: The evolution toward a smoother state makes the solution increasingly amenable to spectral approximation
+	\item \textbf{Initial Complexity}: At ($t = \pi/8$) the solution may contain steeper gradients or transitional features that are more challenging to resolve numerically
+	\item \textbf{Fourier Advantage}: As the solution becomes smoother due to the viscous effects, it is better represented by the truncated Fourier series, leading to reduced errors.
 \end{itemize}
-
-This error behavior validates both the physical correctness of the numerical solution and the effectiveness of the Fourier spectral method for capturing the diffusive dynamics of the Burgers' equation.
+%
+This error behavior is validating both the physical correctness of the numerical solution. Furthermore it shows the effectiveness of the Fourier spectral method for capturing the fascinating dynamics of the Burgers' equation.
 
 \subsection{Solution Visualization}
+The results in Figure~\ref{fig:figureLabel} from the Fourier Collocation  implementation are physically consistent and numerically sound:
+%
+\begin{itemize}
+	\item \textbf{Stability Analysis}: The methodology to find the max CFL successfully identifies stability boundaries through error spike detection.
+	\item \textbf{Convergence Validation}: Spectral convergence rates show optimal performance for smooth, periodic solutions.
+	\item \textbf{Physical Accuracy}: The decreasing error trend and solution visualization validate the physical correctness of the implementation.
+	\item \textbf{Method Effectiveness}: The combination of Fourier spectral spatial discretization with 4th-order Runge-Kutta time integration provides both high accuracy and computational efficiency
+\end{itemize}
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.5\textwidth}
@@ -182,17 +185,8 @@ This error behavior validates both the physical correctness of the numerical sol
 		\label{sfig:sublabel4}
 	\end{subfigure}
 	\caption{\textbf{Comparison of Analytical and Numerical Solution}
-		The plots confirm excellent agreement between the numerical and analytical solutions at all time steps. The evolution shows the characteristic sawtooth-like traveling wave structure, with the solution maintaining its shape while propagating at velocity $c = 4.0$ and gradually smoothing due to viscous diffusion ($\nu = 0.1$). The perfect overlap between numerical and analytical solutions demonstrates the high accuracy of the Fourier Collocation method.
+		The plots confirm agreement between the numerical and analytical solutions at all time steps. The evolution shows the characteristic sawtooth-like traveling wave structure, with the solution maintaining its shape while propagating at velocity $c = 4.0$ and gradually smoothing due to viscous diffusion ($\nu = 0.1$). 
 	}
 	\label{fig:figureLabel}
 \end{figure}
 
-\subsubsection{Assessment of Overall Results}
-The results from the Fourier Collocation implementation are \textbf{physically consistent and numerically sound}:
-
-\begin{itemize}
-	\item \textbf{Stability Analysis}: The CFL determination methodology successfully identifies stability boundaries through error spike detection
-	\item \textbf{Convergence Validation}: Spectral convergence rates confirm optimal performance for smooth, periodic solutions
-	\item \textbf{Physical Accuracy}: The decreasing error trend and excellent solution visualization validate the physical correctness of the implementation
-	\item \textbf{Method Effectiveness}: The combination of Fourier spectral spatial discretization with 4th-order Runge-Kutta time integration provides both high accuracy and computational efficiency
-\end{itemize}
