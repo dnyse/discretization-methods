@@ -313,8 +313,6 @@ std::vector<double> determine_cfl_values() {
   // ax->title("Optimal cfl Fourier Galerkin Method");
 
   for (int N : N_values) {
-    auto galerkin = std::make_shared<FourierGalerkin<double>>();
-    BurgersGalerkinSolver<double> solver(galerkin, nu);
 
     // Binary search for maximum stable and accurate CFL
     double cfl_low = 4;
@@ -332,6 +330,8 @@ std::vector<double> determine_cfl_values() {
     double error_at_max_cfl = 0.0;
     while (cfl_test < cfl_high) {
       cfl_test += cfl_step;
+      auto galerkin = std::make_shared<FourierGalerkin<double>>();
+      BurgersGalerkinSolver<double> solver(galerkin, nu);
       solver.initialize(N, t_test, cfl_test);
       solver.solve();
       // auto [_, __, ___, error, ____] = solver.get_results();
@@ -505,7 +505,7 @@ void galerkin_convergence_study(const std::vector<double> &cfl_values) {
 // TODO: (dhub) TODO add final cfl values
 void compare_methods(const std::vector<double> &collocation_cfls,
                      const std::vector<double> &galerkin_cfls) {
-  std::vector<int> N_values = {64, 128};
+  std::vector<int> N_values =  {16, 32, 48, 64, 96, 128, 192, 256};
   double t_final = MathConstants<double>::PI() / 4.0;
   double nu = 0.1;
 
@@ -546,7 +546,7 @@ void compare_methods(const std::vector<double> &collocation_cfls,
     // Galerkin method
     auto galerkin = std::make_shared<FourierGalerkin<double>>();
     BurgersGalerkinSolver<double> galerkin_solver(galerkin, nu);
-    galerkin_solver.initialize(N, t_final);
+    galerkin_solver.initialize(N, t_final, galerkin_cfl);
     galerkin_solver.solve();
     auto [x_g, u_g, u_exact_g, error_g, time_g, actual_cfl_g] =
         galerkin_solver.get_results();
